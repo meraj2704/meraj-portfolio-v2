@@ -24,7 +24,9 @@ export default function MessagesAdmin() {
     setItems(body.data ?? []);
     setLoading(false);
   }
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
 
   async function toggleRead(m: Msg) {
     await fetch(`/api/contact/${m._id}`, {
@@ -44,22 +46,35 @@ export default function MessagesAdmin() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>Messages</h1>
-      {items.length === 0 && <p style={{ color: "#888" }}>No messages yet.</p>}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <h1 className="text-2xl font-bold mb-4">Messages</h1>
+      {items.length === 0 && <p className="text-neutral-500">No messages yet.</p>}
+      <div className="flex flex-col gap-3">
         {items.map((m) => (
-          <div key={m._id} style={{ background: m.read ? "#fff" : "#fff8e1", border: "1px solid #eee", padding: 14, borderRadius: 8 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <div
+            key={m._id}
+            className={`border border-neutral-200 p-3.5 rounded-lg ${
+              m.read ? "bg-white" : "bg-amber-50"
+            }`}
+          >
+            <div className="flex justify-between items-baseline">
               <strong>{m.name}</strong>
-              <span style={{ fontSize: 12, color: "#666" }}>{new Date(m.createdAt).toLocaleString()}</span>
+              <span className="text-xs text-neutral-600">
+                {new Date(m.createdAt).toLocaleString()}
+              </span>
             </div>
-            <div style={{ fontSize: 13, color: "#444" }}>{m.email}</div>
-            <p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{m.message}</p>
-            <div style={{ marginTop: 10, display: "flex", gap: 12 }}>
-              <button onClick={() => toggleRead(m)} style={{ background: "none", border: 0, color: "#0a64ff", cursor: "pointer", padding: 0, fontSize: 13 }}>
+            <div className="text-[13px] text-neutral-700">{m.email}</div>
+            <p className="whitespace-pre-wrap mt-2">{m.message}</p>
+            <div className="mt-2.5 flex gap-3">
+              <button
+                onClick={() => toggleRead(m)}
+                className="bg-transparent border-0 text-blue-600 cursor-pointer p-0 text-[13px] hover:underline"
+              >
                 Mark as {m.read ? "unread" : "read"}
               </button>
-              <button onClick={() => remove(m._id)} style={{ background: "none", border: 0, color: "#c00", cursor: "pointer", padding: 0, fontSize: 13 }}>
+              <button
+                onClick={() => remove(m._id)}
+                className="bg-transparent border-0 text-red-600 cursor-pointer p-0 text-[13px] hover:underline"
+              >
                 Delete
               </button>
             </div>

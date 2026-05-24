@@ -42,14 +42,22 @@ export function ImageField({
   }
 
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{label}</div>
+    <div className="mb-3">
+      <div className="text-xs text-neutral-600 mb-1">{label}</div>
       {value?.url && (
-        <div style={{ marginBottom: 8 }}>
+        <div className="mb-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value.url} alt="" style={{ maxWidth: 200, maxHeight: 140, borderRadius: 6, border: "1px solid #ddd" }} />
+          <img
+            src={value.url}
+            alt=""
+            className="max-w-50 max-h-35 rounded-md border border-neutral-300"
+          />
           <div>
-            <button type="button" onClick={() => onChange(null)} style={{ fontSize: 12, color: "#c00", background: "none", border: 0, cursor: "pointer", padding: 0, marginTop: 4 }}>
+            <button
+              type="button"
+              onClick={() => onChange(null)}
+              className="text-xs text-red-600 bg-transparent border-0 cursor-pointer p-0 mt-1"
+            >
               Remove
             </button>
           </div>
@@ -64,9 +72,10 @@ export function ImageField({
           if (f) void handleFile(f);
           e.target.value = "";
         }}
+        className="text-sm"
       />
-      {busy && <span style={{ marginLeft: 8, fontSize: 12, color: "#555" }}>Uploading…</span>}
-      {error && <div style={{ color: "#c00", fontSize: 12, marginTop: 4 }}>{error}</div>}
+      {busy && <span className="ml-2 text-xs text-neutral-600">Uploading…</span>}
+      {error && <div className="text-red-600 text-xs mt-1">{error}</div>}
     </div>
   );
 }

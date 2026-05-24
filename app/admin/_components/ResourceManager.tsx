@@ -15,6 +15,16 @@ export type Field = {
 
 type Item = Record<string, unknown> & { _id?: string };
 
+const btn =
+  "bg-neutral-950 text-white border-0 px-3.5 py-2 rounded-md cursor-pointer hover:bg-neutral-800 transition-colors disabled:opacity-60";
+const btnSecondary =
+  "bg-neutral-200 text-neutral-900 border-0 px-3.5 py-2 rounded-md cursor-pointer hover:bg-neutral-300 transition-colors";
+const btnSm = "bg-transparent border-0 cursor-pointer p-0 text-[13px]";
+const th = "text-left px-3 py-2.5 text-xs font-semibold text-neutral-600";
+const td = "px-3 py-2.5 text-sm";
+const input =
+  "w-full px-2.5 py-2 border border-neutral-300 rounded-md outline-none focus:border-neutral-900";
+
 export function ResourceManager({
   title,
   endpoint,
@@ -93,46 +103,51 @@ export function ResourceManager({
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700 }}>{title}</h1>
-        <button onClick={() => setEditing(newItem())} style={btn()}>+ New</button>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <button onClick={() => setEditing(newItem())} className={btn}>+ New</button>
       </div>
 
       {loading ? (
         <p>Loading…</p>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #eee" }}>
+        <table className="w-full border-collapse bg-white border border-neutral-200">
           <thead>
-            <tr style={{ background: "#f3f3f3" }}>
+            <tr className="bg-neutral-100">
               {listColumns.map((c) => (
-                <th key={c} style={th()}>{c}</th>
+                <th key={c} className={th}>{c}</th>
               ))}
-              <th style={th()}>Actions</th>
+              <th className={th}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={String(item._id)} style={{ borderTop: "1px solid #eee" }}>
+              <tr key={String(item._id)} className="border-t border-neutral-200">
                 {listColumns.map((c) => (
-                  <td key={c} style={td()}>{renderCell(item[c])}</td>
+                  <td key={c} className={td}>{renderCell(item[c])}</td>
                 ))}
-                <td style={td()}>
-                  <button onClick={() => setEditing({ ...item })} style={btnSm()}>Edit</button>{" "}
-                  <button onClick={() => remove(String(item._id))} style={{ ...btnSm(), color: "#c00" }}>Delete</button>
+                <td className={td}>
+                  <button onClick={() => setEditing({ ...item })} className={btnSm}>Edit</button>
+                  <span className="mx-1" />
+                  <button onClick={() => remove(String(item._id))} className={`${btnSm} text-red-600`}>Delete</button>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={listColumns.length + 1} style={{ ...td(), color: "#888" }}>No items yet.</td></tr>
+              <tr>
+                <td colSpan={listColumns.length + 1} className={`${td} text-neutral-500`}>
+                  No items yet.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
       )}
 
       {editing && (
-        <div style={modalOverlay()}>
-          <div style={modal()}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>
+        <div className="fixed inset-0 bg-black/40 grid place-items-center z-50">
+          <div className="bg-white p-6 rounded-[10px] w-[520px] max-h-[85vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-3">
               {editing._id ? "Edit" : "New"} {title.slice(0, -1)}
             </h2>
             {fields.map((f) => (
@@ -143,12 +158,12 @@ export function ResourceManager({
                 onChange={(v) => setEditing({ ...editing, [f.name]: v })}
               />
             ))}
-            {error && <p style={{ color: "#c00", fontSize: 13 }}>{error}</p>}
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <button onClick={save} disabled={saving} style={btn()}>
+            {error && <p className="text-red-600 text-[13px]">{error}</p>}
+            <div className="flex gap-2 mt-3">
+              <button onClick={save} disabled={saving} className={btn}>
                 {saving ? "Saving…" : "Save"}
               </button>
-              <button onClick={() => setEditing(null)} style={{ ...btn(), background: "#eee", color: "#111" }}>
+              <button onClick={() => setEditing(null)} className={btnSecondary}>
                 Cancel
               </button>
             </div>
@@ -159,8 +174,15 @@ export function ResourceManager({
   );
 }
 
-function FieldInput({ field, value, onChange }: { field: Field; value: unknown; onChange: (v: unknown) => void }) {
-  const common = { width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6 } as const;
+function FieldInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: Field;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
   if (field.type === "image") {
     return (
       <ImageField
@@ -174,21 +196,35 @@ function FieldInput({ field, value, onChange }: { field: Field; value: unknown; 
   if (field.type === "textarea") {
     return (
       <Wrap label={field.label}>
-        <textarea value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} rows={4} style={common} />
+        <textarea
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          rows={4}
+          className={input}
+        />
       </Wrap>
     );
   }
   if (field.type === "boolean") {
     return (
       <Wrap label={field.label}>
-        <input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />
+        <input
+          type="checkbox"
+          checked={!!value}
+          onChange={(e) => onChange(e.target.checked)}
+        />
       </Wrap>
     );
   }
   if (field.type === "number") {
     return (
       <Wrap label={field.label}>
-        <input type="number" value={(value as number) ?? 0} onChange={(e) => onChange(Number(e.target.value))} style={common} />
+        <input
+          type="number"
+          value={(value as number) ?? 0}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className={input}
+        />
       </Wrap>
     );
   }
@@ -199,23 +235,31 @@ function FieldInput({ field, value, onChange }: { field: Field; value: unknown; 
         <input
           type="text"
           value={arr.join(", ")}
-          onChange={(e) => onChange(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-          style={common}
+          onChange={(e) =>
+            onChange(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))
+          }
+          className={input}
         />
       </Wrap>
     );
   }
   return (
     <Wrap label={field.label}>
-      <input type="text" value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} required={field.required} style={common} />
+      <input
+        type="text"
+        value={(value as string) ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        required={field.required}
+        className={input}
+      />
     </Wrap>
   );
 }
 
 function Wrap({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label style={{ display: "block", marginBottom: 10 }}>
-      <span style={{ display: "block", fontSize: 12, color: "#555", marginBottom: 4 }}>{label}</span>
+    <label className="block mb-2.5">
+      <span className="block text-xs text-neutral-600 mb-1">{label}</span>
       {children}
     </label>
   );
@@ -231,10 +275,3 @@ function renderCell(v: unknown): string {
   }
   return String(v);
 }
-
-function btn(): React.CSSProperties { return { background: "#0a0a0a", color: "#fff", border: 0, padding: "8px 14px", borderRadius: 6, cursor: "pointer" }; }
-function btnSm(): React.CSSProperties { return { background: "none", border: 0, cursor: "pointer", padding: 0, fontSize: 13 }; }
-function th(): React.CSSProperties { return { textAlign: "left", padding: "10px 12px", fontSize: 12, fontWeight: 600, color: "#555" }; }
-function td(): React.CSSProperties { return { padding: "10px 12px", fontSize: 14 }; }
-function modalOverlay(): React.CSSProperties { return { position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "grid", placeItems: "center", zIndex: 50 }; }
-function modal(): React.CSSProperties { return { background: "#fff", padding: 24, borderRadius: 10, width: 520, maxHeight: "85vh", overflowY: "auto" }; }

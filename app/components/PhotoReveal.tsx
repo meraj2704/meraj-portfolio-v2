@@ -5,26 +5,23 @@ import Image from "next/image";
 
 export default function PhotoReveal() {
   const ref = useRef<HTMLElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = ref.current;
-    if (!section) return;
-
-    const img = section.querySelector<HTMLElement>(".photo-reveal-img-wrap");
-    if (!img) return;
+    const img = imgRef.current;
+    if (!section || !img) return;
 
     const onScroll = () => {
       const rect = section.getBoundingClientRect();
       const windowH = window.innerHeight;
 
       if (rect.top < windowH && rect.bottom > 0) {
-        // 0 = just entering viewport, 1 = fully past
         const progress = Math.min(
           Math.max((windowH - rect.top) / (windowH + rect.height), 0),
           1
         );
-        // Translate image vertically relative to its container for true parallax
-        const yShift = (progress - 0.5) * 20; // -10% to +10%
+        const yShift = (progress - 0.5) * 20;
         img.style.transform = `translate3d(0, ${yShift}%, 0)`;
       }
     };
@@ -35,18 +32,24 @@ export default function PhotoReveal() {
   }, []);
 
   return (
-    <section ref={ref} className="photo-reveal-section">
-      <div className=" ">
-        <div className="photo-reveal-img-wrap">
+    <section
+      ref={ref}
+      className="relative w-full h-screen min-h-[400px] overflow-hidden bg-black"
+    >
+      <div className="relative w-[90%] max-w-[500px] h-[80vh] mx-auto my-[10vh] overflow-hidden rounded-3xl">
+        <div
+          ref={imgRef}
+          className="absolute -top-[15%] left-0 w-full h-[130%] will-change-transform"
+        >
           <Image
             src="/photo-reveal.png"
             alt="Meraj Hossain"
             fill
-            className="photo-reveal-img"
+            className="object-cover object-[center_top]"
             priority
           />
         </div>
-        <div className="photo-reveal-gradient" />
+        <div className="absolute top-0 left-0 right-0 h-[30%] bg-[linear-gradient(180deg,#000_0%,transparent_100%)] z-[2] pointer-events-none" />
       </div>
     </section>
   );

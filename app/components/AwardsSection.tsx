@@ -1,6 +1,19 @@
 "use client";
 
 import React from "react";
+import {
+  splitContainer,
+  splitItem,
+  splitItemDate,
+  splitItemDesc,
+  splitItemMeta,
+  splitItemRole,
+  splitItemTitle,
+  splitList,
+  splitSection,
+  splitTitle,
+  splitTitleWrap,
+} from "./_shared/splitClasses";
 
 const awardsData = [
   {
@@ -25,20 +38,20 @@ const awardsData = [
 
 export default function AwardsSection() {
   return (
-    <section className="split-section" id="awards">
-      <div className="split-container">
-        <div className="split-title-wrap">
-          <h2 className="split-title">AWARDS</h2>
+    <section className={splitSection} id="awards">
+      <div className={splitContainer}>
+        <div className={splitTitleWrap}>
+          <h2 className={splitTitle}>AWARDS</h2>
         </div>
-        <div className="split-list">
+        <div className={splitList}>
           {awardsData.map((item, index) => (
-            <div key={index} className="split-item">
-              <h3 className="split-item-title">{item.award}</h3>
-              <div className="split-item-meta">
-                <span className="split-item-role">{item.project}</span>
-                <span className="split-item-date">{item.date}</span>
+            <div key={index} className={splitItem}>
+              <h3 className={splitItemTitle}>{item.award}</h3>
+              <div className={splitItemMeta}>
+                <span className={splitItemRole}>{item.project}</span>
+                <span className={splitItemDate}>{item.date}</span>
               </div>
-              <p className="split-item-desc">{item.desc}</p>
+              <p className={splitItemDesc}>{item.desc}</p>
             </div>
           ))}
         </div>

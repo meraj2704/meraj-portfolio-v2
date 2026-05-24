@@ -22,7 +22,7 @@ const clients = [
     y: 15,
     content: (
       <span className="font-semibold tracking-tight text-2xl flex items-center gap-1">
-        <span className="text-3xl"></span> Pay
+        <span className="text-3xl"></span> Pay
       </span>
     ),
   },
@@ -89,12 +89,12 @@ const clients = [
 
 export default function ClientsArch() {
   return (
-    <section className="clients-arch-section">
-      <div className="clients-arch-container">
+    <section className="py-20 md:py-30 bg-black overflow-hidden flex justify-start md:justify-center max-md:overflow-x-auto max-md:[-webkit-overflow-scrolling:touch] max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden">
+      <div className="flex items-center justify-center gap-4 w-max max-md:px-10">
         {clients.map((client) => (
           <div
             key={client.name}
-            className="client-card"
+            className="w-[180px] h-[180px] bg-[#0a0a0a] rounded-2xl border border-white/[0.03] flex items-center justify-center transition-[transform,background,border-color] duration-300 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] shrink-0 text-white hover:bg-[#111] hover:border-white/[0.08]"
             style={{
               transform: `rotate(${client.rotate}deg) translateY(${client.y}px)`,
             }}

@@ -36,7 +36,7 @@ export default function CtaSection() {
             Math.max((windowH - rect.top) / (windowH + rect.height), 0),
             1
           );
-          const yShift = (progress - 0.5) * 20; // -10% to +10%
+          const yShift = (progress - 0.5) * 20;
           imgRef.current.style.transform = `translate3d(0, ${yShift}%, 0)`;
         }
       }
@@ -48,62 +48,87 @@ export default function CtaSection() {
   }, []);
 
   return (
-    <section className="cta-section" id="contact" ref={sectionRef}>
-      <div className="cta-sticky">
-        <h2 className="cta-title" ref={titleRef}>
-          LET&apos;S WORK<br />
-          TOGETHER
+    <section
+      className="relative w-full bg-[#0a0a0a] pb-20 md:pb-30"
+      id="contact"
+      ref={sectionRef}
+    >
+      <div className="sticky top-0 h-screen w-full flex items-center justify-center z-[1] overflow-hidden pointer-events-none">
+        <h2
+          ref={titleRef}
+          className="text-[clamp(4rem,12vw,9rem)] font-black leading-[0.85] tracking-[-0.05em] text-white text-center uppercase will-change-[opacity,transform]"
+        >
+          LET&apos;S WORK<br />TOGETHER
         </h2>
       </div>
 
-      <div className="cta-content">
-        <div className="cta-image-wrapper" ref={imgWrapRef}>
+      <div className="relative z-10 flex flex-col items-center bg-[#0a0a0a] shadow-[0_-40px_60px_40px_#0a0a0a] px-5 pt-5 pb-30">
+        <div
+          ref={imgWrapRef}
+          className="relative w-full max-w-[340px] aspect-[4/5] rounded-b-[999px] overflow-hidden mb-15"
+        >
           <Image
             src="/meraj-profile.jpg"
             alt="Meraj Hossain"
             fill
-            className="cta-image"
             sizes="(max-width: 768px) 100vw, 400px"
             ref={imgRef}
+            className="object-cover object-[center_top] !h-[130%] !-top-[15%] will-change-transform"
           />
         </div>
 
-        <p className="cta-footer-text">
+        <p className="text-[11px] font-extrabold tracking-[0.05em] leading-[1.6] text-white max-w-[500px] uppercase">
           BASED IN DHAKA, I AM A FULL-STACK DEVELOPER AND DIGITAL DESIGNER. MY
           PASSION FOR MINIMALIST AESTHETICS, ELEGANT TYPOGRAPHY, AND INTUITIVE
           DESIGN IS EVIDENT IN MY WORK.
         </p>
 
-        <div className="cta-direct-contact">
-          <a href="mailto:hello@meraj.dev" className="cta-direct-link">HELLO@MERAJ.DEV</a>
-          <span className="cta-direct-divider">•</span>
-          <a href="tel:+8801700000000" className="cta-direct-link">+880 1700 000 000</a>
+        <div className="mt-6 flex items-center gap-4 flex-wrap justify-center">
+          <a
+            href="mailto:hello@meraj.dev"
+            className="text-sm font-bold text-white no-underline tracking-[0.05em] transition-opacity duration-300 hover:opacity-60"
+          >
+            HELLO@MERAJ.DEV
+          </a>
+          <span className="text-white/30 text-lg">•</span>
+          <a
+            href="tel:+8801700000000"
+            className="text-sm font-bold text-white no-underline tracking-[0.05em] transition-opacity duration-300 hover:opacity-60"
+          >
+            +880 1700 000 000
+          </a>
         </div>
 
         {/* Contact Form */}
-        <div className="contact-form-container">
-          <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-row">
+        <div className="w-full max-w-[600px] mt-20 text-left">
+          <form
+            className="flex flex-col gap-10"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div className="flex flex-col md:flex-row gap-10">
               <input
                 type="text"
                 placeholder="YOUR NAME"
-                className="form-input"
                 required
+                className="w-full bg-transparent border-0 border-b border-white/20 text-white text-[13px] font-semibold tracking-[0.05em] py-4 outline-none rounded-none placeholder:text-white/30 placeholder:uppercase focus:border-b-white transition-colors duration-300"
               />
               <input
                 type="email"
                 placeholder="EMAIL ADDRESS"
-                className="form-input"
                 required
+                className="w-full bg-transparent border-0 border-b border-white/20 text-white text-[13px] font-semibold tracking-[0.05em] py-4 outline-none rounded-none placeholder:text-white/30 placeholder:uppercase focus:border-b-white transition-colors duration-300"
               />
             </div>
             <textarea
               placeholder="TELL ME ABOUT YOUR PROJECT..."
-              className="form-textarea"
               rows={4}
               required
+              className="w-full bg-transparent border-0 border-b border-white/20 text-white text-[13px] font-semibold tracking-[0.05em] py-4 outline-none rounded-none placeholder:text-white/30 placeholder:uppercase focus:border-b-white transition-colors duration-300 resize-y min-h-[100px]"
             />
-            <button type="submit" className="cta-btn form-submit">
+            <button
+              type="submit"
+              className="self-center mt-5 inline-flex items-center justify-center bg-white text-black text-[13px] font-extrabold tracking-[0.05em] px-8 py-4 rounded-[40px] uppercase cursor-pointer border-0 transition-[transform,background] duration-300 hover:scale-105 hover:bg-[#f0f0f0]"
+            >
               SEND INQUIRY
             </button>
           </form>

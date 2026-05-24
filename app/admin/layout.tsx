@@ -16,31 +16,30 @@ const sections = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111" }}>
-      <aside style={{ width: 220, background: "#0a0a0a", color: "#fff", padding: "24px 16px" }}>
-        <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 24 }}>Admin</div>
-        <nav style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div className="flex min-h-screen font-sans text-neutral-900">
+      <aside className="w-[220px] bg-neutral-950 text-white px-4 py-6">
+        <div className="font-bold text-lg mb-6">Admin</div>
+        <nav className="flex flex-col gap-1.5">
           {sections.map((s) => (
             <Link
               key={s.href}
               href={s.href}
-              style={{ color: "#ddd", textDecoration: "none", padding: "8px 10px", borderRadius: 6 }}
+              className="text-neutral-300 no-underline px-2.5 py-2 rounded-md hover:bg-neutral-800 hover:text-white transition-colors"
             >
               {s.label}
             </Link>
           ))}
         </nav>
-        <form action="/api/auth/logout" method="post" style={{ marginTop: 24 }}>
+        <form action="/api/auth/logout" method="post" className="mt-6">
           <button
-            formAction="/api/auth/logout"
             type="submit"
-            style={{ background: "#222", color: "#fff", border: "1px solid #333", padding: "8px 12px", borderRadius: 6, cursor: "pointer", width: "100%" }}
+            className="w-full bg-neutral-800 text-white border border-neutral-700 px-3 py-2 rounded-md cursor-pointer hover:bg-neutral-700 transition-colors"
           >
             Log out
           </button>
         </form>
       </aside>
-      <main style={{ flex: 1, padding: 32, background: "#fafafa" }}>{children}</main>
+      <main className="flex-1 p-8 bg-neutral-50">{children}</main>
     </div>
   );
 }

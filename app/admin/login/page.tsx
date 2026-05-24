@@ -36,34 +36,37 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ display: "grid", placeItems: "center", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: "#0a0a0a" }}>
-      <form onSubmit={onSubmit} style={{ background: "#fff", padding: 32, borderRadius: 12, width: 360, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Admin login</h1>
-        <label style={{ display: "block", marginBottom: 12 }}>
-          <span style={{ display: "block", fontSize: 12, color: "#555", marginBottom: 4 }}>Email</span>
+    <div className="grid place-items-center min-h-screen font-sans bg-neutral-950">
+      <form
+        onSubmit={onSubmit}
+        className="bg-white p-8 rounded-xl w-[360px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-neutral-900"
+      >
+        <h1 className="text-xl font-bold mb-4">Admin login</h1>
+        <label className="block mb-3">
+          <span className="block text-xs text-neutral-600 mb-1">Email</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: "100%", padding: "10px 12px", border: "1px solid #ddd", borderRadius: 6 }}
+            className="w-full px-3 py-2.5 border border-neutral-300 rounded-md outline-none focus:border-neutral-900"
           />
         </label>
-        <label style={{ display: "block", marginBottom: 16 }}>
-          <span style={{ display: "block", fontSize: 12, color: "#555", marginBottom: 4 }}>Password</span>
+        <label className="block mb-4">
+          <span className="block text-xs text-neutral-600 mb-1">Password</span>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "10px 12px", border: "1px solid #ddd", borderRadius: 6 }}
+            className="w-full px-3 py-2.5 border border-neutral-300 rounded-md outline-none focus:border-neutral-900"
           />
         </label>
-        {error && <p style={{ color: "#c00", fontSize: 13, marginBottom: 12 }}>{error}</p>}
+        {error && <p className="text-red-600 text-[13px] mb-3">{error}</p>}
         <button
           type="submit"
           disabled={loading}
-          style={{ width: "100%", background: "#0a0a0a", color: "#fff", padding: "12px", borderRadius: 6, border: 0, cursor: "pointer", opacity: loading ? 0.6 : 1 }}
+          className="w-full bg-neutral-950 text-white py-3 rounded-md border-0 cursor-pointer disabled:opacity-60"
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>

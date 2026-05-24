@@ -1,6 +1,13 @@
 "use client";
 
 import React from "react";
+import {
+  splitContainer,
+  splitSection,
+  splitTitle,
+  splitTitleWrap,
+  splitItemDesc,
+} from "./_shared/splitClasses";
 
 const stackData = [
   {
@@ -46,22 +53,29 @@ const stackData = [
 
 export default function StackSection() {
   return (
-    <section className="split-section" id="stack">
-      <div className="split-container">
-        <div className="split-title-wrap">
-          <h2 className="split-title">FAVOURITE<br />STACK</h2>
+    <section className={splitSection} id="stack">
+      <div className={splitContainer}>
+        <div className={splitTitleWrap}>
+          <h2 className={splitTitle}>FAVOURITE<br />STACK</h2>
         </div>
-        <div className="stack-list">
+        <div className="flex flex-col gap-6">
           {stackData.map((item, index) => (
-            <div key={index} className="stack-card">
-              <div className="stack-icon-wrap">{item.icon}</div>
-              <div className="stack-info">
-                <h3 className="stack-title">{item.title}</h3>
-                <div className="stack-info-meta">
-                  <span className="stack-role">{item.role}</span>
-                  <span className="stack-percent">{item.percent}</span>
+            <div
+              key={index}
+              className="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 md:p-8 flex flex-col md:flex-row gap-4 md:gap-8 transition-colors duration-300 hover:border-white/10"
+            >
+              <div className="w-12 h-12 rounded-xl bg-[#111] flex items-center justify-center shrink-0">
+                {item.icon}
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-white uppercase">{item.title}</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[11px] font-bold tracking-wider text-white uppercase mt-2">
+                    {item.role}
+                  </span>
+                  <span className="text-[13px] font-bold text-white">{item.percent}</span>
                 </div>
-                <p className="split-item-desc">{item.desc}</p>
+                <p className={splitItemDesc}>{item.desc}</p>
               </div>
             </div>
           ))}
