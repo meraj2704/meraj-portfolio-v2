@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { ImageField, type UploadedImage } from "./ImageField";
+import { MultiImageField } from "./MultiImageField";
 
-type FieldType = "text" | "textarea" | "number" | "boolean" | "image" | "tags";
+type FieldType = "text" | "textarea" | "number" | "boolean" | "image" | "gallery" | "tags";
 
 export type Field = {
   name: string;
@@ -64,6 +65,7 @@ export function ResourceManager({
       else if (f.type === "number") init[f.name] = 0;
       else if (f.type === "tags") init[f.name] = [];
       else if (f.type === "image") init[f.name] = null;
+      else if (f.type === "gallery") init[f.name] = [];
       else init[f.name] = "";
     }
     return init;
@@ -146,7 +148,7 @@ export function ResourceManager({
 
       {editing && (
         <div className="fixed inset-0 bg-black/40 grid place-items-center z-50">
-          <div className="bg-white p-6 rounded-[10px] w-[520px] max-h-[85vh] overflow-y-auto">
+          <div className="bg-white p-6 rounded-[10px] w-[600px] max-w-[92vw] max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-3">
               {editing._id ? "Edit" : "New"} {title.slice(0, -1)}
             </h2>
@@ -188,6 +190,16 @@ function FieldInput({
       <ImageField
         label={field.label}
         value={(value as UploadedImage) ?? null}
+        onChange={onChange}
+        folder={field.folder}
+      />
+    );
+  }
+  if (field.type === "gallery") {
+    return (
+      <MultiImageField
+        label={field.label}
+        value={(value as UploadedImage[]) ?? []}
         onChange={onChange}
         folder={field.folder}
       />

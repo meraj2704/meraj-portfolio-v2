@@ -12,7 +12,6 @@
   --color-foreground: #ffffff;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
@@ -43,4 +42,9 @@ body {
   0%   { stroke-dashoffset: 75.4; }
   50%  { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: 75.4; }
+}
+
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
