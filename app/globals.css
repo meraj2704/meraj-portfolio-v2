@@ -4,6 +4,22 @@
   * {
     cursor: none !important;
   }
+  .admin-shell,
+  .admin-shell * {
+    cursor: auto !important;
+  }
+  .admin-shell a,
+  .admin-shell button,
+  .admin-shell [role="button"],
+  .admin-shell label,
+  .admin-shell summary {
+    cursor: pointer !important;
+  }
+  .admin-shell input,
+  .admin-shell textarea,
+  .admin-shell select {
+    cursor: text !important;
+  }
 }
 
 @theme {

@@ -1,9 +1,9 @@
+import { NextResponse } from "next/server";
 import { deleteSession } from "@/lib/session";
-import { jsonOk } from "@/lib/api";
 
 export const runtime = "nodejs";
 
-export async function POST() {
+export async function POST(req: Request) {
   await deleteSession();
-  return jsonOk({ ok: true });
+  return NextResponse.redirect(new URL("/login", req.url), { status: 303 });
 }

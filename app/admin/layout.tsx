@@ -16,7 +16,7 @@ const sections = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex W-full min-h-screen font-sans text-neutral-900">
+    <div className="admin-shell flex W-full min-h-screen font-sans text-neutral-900">
       <aside className="w-[220px] bg-neutral-950 text-white px-4 py-6">
         <div className="font-bold text-lg mb-6">Admin</div>
         <nav className="flex flex-col gap-1.5">

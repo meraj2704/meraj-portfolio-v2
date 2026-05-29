@@ -1,8 +1,11 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin") ?? false;
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef({ mouseX: 0, mouseY: 0, destX: 0, destY: 0 });
@@ -10,6 +13,7 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (isAdmin) return;
     // Disable on touch devices
     if (window.matchMedia("(pointer: coarse)").matches) return;
 
@@ -69,7 +73,9 @@ export default function CustomCursor() {
       document.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isAdmin]);
+
+  if (isAdmin) return null;
 
   if (
     typeof window !== "undefined" &&
