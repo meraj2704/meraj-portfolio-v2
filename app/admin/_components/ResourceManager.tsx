@@ -1,10 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { ImageField, type UploadedImage } from "./ImageField";
 import { MultiImageField } from "./MultiImageField";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DataTable, type Column } from "@/components/table/DataTable";
+import { InputField } from "@/components/inputs/InputField";
+import { TextAreaField } from "@/components/inputs/TextAreaField";
+import { ToggleField } from "@/components/inputs/ToggleField";
+import { SelectField } from "@/components/inputs/SelectField";
 
-type FieldType = "text" | "textarea" | "number" | "boolean" | "image" | "gallery" | "tags";
+type FieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "boolean"
+  | "image"
+  | "gallery"
+  | "tags"
+  | "select";
 
 export type Field = {
   name: string;
@@ -12,19 +34,11 @@ export type Field = {
   type: FieldType;
   required?: boolean;
   folder?: string;
+  options?: { label: string; value: string | number }[];
 };
 
 type Item = Record<string, unknown> & { _id?: string };
-
-const btn =
-  "bg-neutral-950 text-white border-0 px-3.5 py-2 rounded-md cursor-pointer hover:bg-neutral-800 transition-colors disabled:opacity-60";
-const btnSecondary =
-  "bg-neutral-200 text-neutral-900 border-0 px-3.5 py-2 rounded-md cursor-pointer hover:bg-neutral-300 transition-colors";
-const btnSm = "bg-transparent border-0 cursor-pointer p-0 text-[13px]";
-const th = "text-left px-3 py-2.5 text-xs font-semibold text-neutral-600";
-const td = "px-3 py-2.5 text-sm";
-const input =
-  "w-full px-2.5 py-2 border border-neutral-300 rounded-md outline-none focus:border-neutral-900";
+type Row = Item & { id: string };
 
 export function ResourceManager({
   title,
@@ -87,7 +101,10 @@ export function ResourceManager({
         body: JSON.stringify(payload),
       });
       const body = await res.json();
-      if (!res.ok) throw new Error(body.error || JSON.stringify(body.details) || "Save failed");
+      if (!res.ok)
+        throw new Error(
+          body.error || JSON.stringify(body.details) || "Save failed",
+        );
       setEditing(null);
       await load();
     } catch (err) {
@@ -103,75 +120,104 @@ export function ResourceManager({
     if (res.ok) await load();
   }
 
+  const rows: Row[] = items.map((it) => ({ ...it, id: String(it._id) }));
+
+  const columns: Column<Row>[] = [
+    ...listColumns.map((c) => ({
+      header: c,
+      accessor: (item: Row) => renderCell(item[c]),
+    })),
+    {
+      header: "Actions",
+      className: "text-right",
+      accessor: (item: Row) => (
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            onClick={() => setEditing({ ...item })}
+          >
+            <Pencil className="size-4" />
+            <span className="sr-only">Edit</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 text-red-500 hover:bg-red-50 hover:text-red-600"
+            onClick={() => remove(item.id)}
+          >
+            <Trash2 className="size-4" />
+            <span className="sr-only">Delete</span>
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  const singular = title.endsWith("s") ? title.slice(0, -1) : title;
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <button onClick={() => setEditing(newItem())} className={btn}>+ New</button>
+    <div className="text-primary-text">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-primary-text">{title}</h1>
+        <Button onClick={() => setEditing(newItem())}>
+          <Plus className="size-4" />
+          New {singular}
+        </Button>
       </div>
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : (
-        <table className="w-full border-collapse bg-white border border-neutral-200">
-          <thead>
-            <tr className="bg-neutral-100">
-              {listColumns.map((c) => (
-                <th key={c} className={th}>{c}</th>
-              ))}
-              <th className={th}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={String(item._id)} className="border-t border-neutral-200">
-                {listColumns.map((c) => (
-                  <td key={c} className={td}>{renderCell(item[c])}</td>
-                ))}
-                <td className={td}>
-                  <button onClick={() => setEditing({ ...item })} className={btnSm}>Edit</button>
-                  <span className="mx-1" />
-                  <button onClick={() => remove(String(item._id))} className={`${btnSm} text-red-600`}>Delete</button>
-                </td>
-              </tr>
-            ))}
-            {items.length === 0 && (
-              <tr>
-                <td colSpan={listColumns.length + 1} className={`${td} text-neutral-500`}>
-                  No items yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+      <DataTable data={rows} columns={columns} isLoading={loading} />
 
-      {editing && (
-        <div className="fixed inset-0 bg-black/40 grid place-items-center z-50">
-          <div className="bg-white p-6 rounded-[10px] w-[600px] max-w-[92vw] max-h-[85vh] overflow-y-auto">
-            <h2 className="text-lg font-bold mb-3">
-              {editing._id ? "Edit" : "New"} {title.slice(0, -1)}
-            </h2>
-            {fields.map((f) => (
-              <FieldInput
-                key={f.name}
-                field={f}
-                value={editing[f.name]}
-                onChange={(v) => setEditing({ ...editing, [f.name]: v })}
-              />
-            ))}
-            {error && <p className="text-red-600 text-[13px]">{error}</p>}
-            <div className="flex gap-2 mt-3">
-              <button onClick={save} disabled={saving} className={btn}>
-                {saving ? "Saving…" : "Save"}
-              </button>
-              <button onClick={() => setEditing(null)} className={btnSecondary}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditing(null);
+            setError(null);
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          {editing && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  {editing._id ? `Edit ${singular}` : `New ${singular}`}
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="grid gap-4 py-2">
+                {fields.map((f) => (
+                  <FieldInput
+                    key={f.name}
+                    field={f}
+                    value={editing[f.name]}
+                    onChange={(v) => setEditing({ ...editing, [f.name]: v })}
+                  />
+                ))}
+              </div>
+
+              {error && (
+                <p className="text-sm font-medium text-red-500">{error}</p>
+              )}
+
+              <DialogFooter>
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditing(null)}
+                  disabled={saving}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={save} disabled={saving}>
+                  {saving ? "Saving…" : "Save"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -207,82 +253,100 @@ function FieldInput({
   }
   if (field.type === "textarea") {
     return (
-      <Wrap label={field.label}>
-        <textarea
-          value={(value as string) ?? ""}
-          onChange={(e) => onChange(e.target.value)}
-          rows={4}
-          className={input}
-        />
-      </Wrap>
+      <TextAreaField
+        label={field.label}
+        required={field.required}
+        value={(value as string) ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+      />
     );
   }
   if (field.type === "boolean") {
     return (
-      <Wrap label={field.label}>
-        <input
-          type="checkbox"
-          checked={!!value}
-          onChange={(e) => onChange(e.target.checked)}
-        />
-      </Wrap>
+      <ToggleField
+        label={field.label}
+        required={field.required}
+        checked={!!value}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+    );
+  }
+  if (field.type === "select") {
+    return (
+      <SelectField
+        label={field.label}
+        required={field.required}
+        options={field.options ?? []}
+        value={(value as string) ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+      />
     );
   }
   if (field.type === "number") {
     return (
-      <Wrap label={field.label}>
-        <input
-          type="number"
-          value={(value as number) ?? 0}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className={input}
-        />
-      </Wrap>
+      <InputField
+        label={field.label}
+        required={field.required}
+        type="number"
+        value={(value as number) ?? 0}
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
     );
   }
   if (field.type === "tags") {
     const arr = Array.isArray(value) ? (value as string[]) : [];
     return (
-      <Wrap label={`${field.label} (comma separated)`}>
-        <input
-          type="text"
-          value={arr.join(", ")}
-          onChange={(e) =>
-            onChange(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))
-          }
-          className={input}
-        />
-      </Wrap>
+      <InputField
+        label={`${field.label} (comma separated)`}
+        value={arr.join(", ")}
+        onChange={(e) =>
+          onChange(
+            e.target.value
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+          )
+        }
+      />
     );
   }
   return (
-    <Wrap label={field.label}>
-      <input
-        type="text"
-        value={(value as string) ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        required={field.required}
-        className={input}
-      />
-    </Wrap>
+    <InputField
+      label={field.label}
+      required={field.required}
+      type="text"
+      value={(value as string) ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+    />
   );
 }
 
-function Wrap({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block mb-2.5">
-      <span className="block text-xs text-neutral-600 mb-1">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function renderCell(v: unknown): string {
+function renderCell(v: unknown): React.ReactNode {
   if (v == null) return "";
+  if (typeof v === "boolean") {
+    return (
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+          v ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"
+        }`}
+      >
+        {v ? "Yes" : "No"}
+      </span>
+    );
+  }
   if (typeof v === "object") {
     const o = v as Record<string, unknown>;
-    if (typeof o.url === "string") return "🖼";
-    if (Array.isArray(v)) return v.length + " items";
+    if (typeof o.url === "string") {
+      // eslint-disable-next-line @next/next/no-img-element
+      return (
+        <img
+          src={o.url as string}
+          alt=""
+          className="h-9 w-9 rounded-md border border-gray-100 object-cover"
+        />
+      );
+    }
+    if (Array.isArray(v)) return `${v.length} items`;
     return JSON.stringify(v).slice(0, 60);
   }
   return String(v);

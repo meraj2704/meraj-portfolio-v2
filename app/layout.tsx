@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "./components/SmoothScroll";
-import CustomCursor from "./components/CustomCursor";
-import Preloader from "./components/Preloader";
+import SmoothScroll from "../components/SmoothScroll";
+import CustomCursor from "../components/CustomCursor";
+import Preloader from "../components/Preloader";
 
 const inter = Inter({
   variable: "--font-inter",

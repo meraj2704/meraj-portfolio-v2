@@ -5,19 +5,30 @@
     cursor: none !important;
   }
   .admin-shell,
-  .admin-shell * {
+  .admin-shell *,
+  [data-slot="dialog-overlay"],
+  [data-slot="dialog-content"],
+  [data-slot="dialog-content"] * {
     cursor: auto !important;
   }
   .admin-shell a,
   .admin-shell button,
   .admin-shell [role="button"],
   .admin-shell label,
-  .admin-shell summary {
+  .admin-shell summary,
+  [data-slot="dialog-content"] a,
+  [data-slot="dialog-content"] button,
+  [data-slot="dialog-content"] [role="button"],
+  [data-slot="dialog-content"] label,
+  [data-slot="dialog-content"] summary {
     cursor: pointer !important;
   }
   .admin-shell input,
   .admin-shell textarea,
-  .admin-shell select {
+  .admin-shell select,
+  [data-slot="dialog-content"] input,
+  [data-slot="dialog-content"] textarea,
+  [data-slot="dialog-content"] select {
     cursor: text !important;
   }
 }
@@ -26,6 +37,11 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --color-background: #000000;
   --color-foreground: #ffffff;
+
+  /* Admin UI tokens (used by components/inputs, components/table, components/ui) */
+  --color-primary: #16a34a;
+  --color-primary-text: #171717;
+  --color-secondary-text: #6b7280;
 }
 
 html { scroll-behavior: smooth; }
@@ -63,4 +79,29 @@ body {
 @keyframes marquee-x {
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* 404 / not-found page animations */
+@keyframes nf-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes nf-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes nf-orb {
+  0%, 100% { transform: scale(1);   opacity: 0.3; }
+  50%      { transform: scale(1.2); opacity: 0.55; }
+}
+
+@keyframes nf-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nf-digit {
+  from { opacity: 0; transform: translateY(60px) rotateX(-90deg); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0); }
 }

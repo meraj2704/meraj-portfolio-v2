@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
-import Footer from "@/app/components/Footer";
+import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
