@@ -16,8 +16,11 @@ const sections = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="admin-shell flex W-full min-h-screen font-sans text-neutral-900">
-      <aside className="w-[220px] bg-neutral-950 text-white px-4 py-6">
+    <div
+      data-lenis-prevent
+      className="admin-shell flex w-full h-screen overflow-hidden font-sans text-neutral-900"
+    >
+      <aside className="sticky top-0 w-[220px] h-screen shrink-0 overflow-y-auto bg-neutral-950 text-white px-4 py-6">
         <div className="font-bold text-lg mb-6">Admin</div>
         <nav className="flex flex-col gap-1.5">
           {sections.map((s) => (
@@ -39,7 +42,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </button>
         </form>
       </aside>
-      <main className="flex-1 p-8 bg-neutral-50 border border-green-400">{children}</main>
+      <main className="flex-1 h-screen overflow-y-auto p-8 bg-neutral-50">{children}</main>
     </div>
   );
 }

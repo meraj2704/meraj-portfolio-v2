@@ -61,6 +61,9 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        // Opt this scroll container out of Lenis smooth-scroll so the mouse
+        // wheel scrolls the modal natively instead of being swallowed by Lenis.
+        data-lenis-prevent
         className={cn(
           "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4",
           "bg-white text-primary-text rounded-2xl border border-gray-100 p-6 shadow-2xl",

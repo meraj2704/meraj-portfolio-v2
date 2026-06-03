@@ -1,9 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
 import Footer from "@/components/Footer";
+import ParallaxImage from "@/components/ParallaxImage";
+import { stripHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,10 @@ export async function generateMetadata({
   if (!project) return { title: "Project not found" };
   return {
     title: `${project.title} — Meraj Hossain`,
-    description: project.summary || project.description?.slice(0, 160) || undefined,
+    description:
+      stripHtml(project.summary) ||
+      stripHtml(project.description).slice(0, 160) ||
+      undefined,
   };
 }
 
@@ -50,16 +54,25 @@ export default async function ProjectDetailPage({
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen text-white">
-      <div className="px-5 md:px-10 pt-28 md:pt-36 pb-12 md:pb-20">
+      <div className="px-5 md:px-10 pt-14 md:pt-20 pb-12 md:pb-20">
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-2 mb-8 md:mb-12 text-[12px] tracking-[0.14em] uppercase text-white/60 no-underline hover:text-white transition-colors"
+        >
+          ← Back to projects
+        </Link>
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
           <div>
             <h1 className="text-[clamp(2.75rem,7vw,6rem)] font-black leading-[0.95] tracking-[-0.04em] uppercase">
               {project.title}
             </h1>
             {(project.summary || project.description) && (
-              <p className="mt-6 md:mt-8 text-[15px] md:text-[16px] leading-[1.7] text-white/55 max-w-[520px]">
-                {project.summary || project.description}
-              </p>
+              <div
+                className="rich-content mt-6 md:mt-8 max-w-[520px] text-[15px] md:text-[16px] leading-[1.7] text-white/55"
+                dangerouslySetInnerHTML={{
+                  __html: project.summary || project.description || "",
+                }}
+              />
             )}
           </div>
 
@@ -96,16 +109,13 @@ export default async function ProjectDetailPage({
       </div>
 
       <div className="px-5 md:px-10 pb-16 md:pb-24">
-        <div className="relative w-full aspect-[16/9] bg-[#111] overflow-hidden rounded-sm">
-          <Image
-            src={cover.url}
-            alt={project.title}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 90vw"
-            className="object-cover"
-          />
-        </div>
+        <ParallaxImage
+          src={cover.url}
+          alt={project.title}
+          priority
+          sizes="(max-width: 768px) 100vw, 90vw"
+          className="w-full aspect-[16/9] bg-[#111] rounded-sm"
+        />
       </div>
 
       {project.description && project.summary && (
@@ -114,9 +124,10 @@ export default async function ProjectDetailPage({
             <h2 className="text-[11px] tracking-[0.16em] uppercase text-white/40">
               About the project
             </h2>
-            <div className="text-[16px] md:text-[18px] leading-[1.7] text-white/75 whitespace-pre-line">
-              {project.description}
-            </div>
+            <div
+              className="rich-content text-[16px] md:text-[18px] leading-[1.7] text-white/75"
+              dangerouslySetInnerHTML={{ __html: project.description ?? "" }}
+            />
           </div>
         </section>
       )}
@@ -125,20 +136,15 @@ export default async function ProjectDetailPage({
         <section className="px-5 md:px-10 pb-20 md:pb-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
             {gallery.map((img, i) => (
-              <div
+              <ParallaxImage
                 key={img.publicId || i}
-                className={`relative bg-[#111] overflow-hidden rounded-sm ${
+                src={img.url}
+                alt={`${project.title} — ${i + 1}`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className={`bg-[#111] rounded-sm ${
                   i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
                 }`}
-              >
-                <Image
-                  src={img.url}
-                  alt={`${project.title} — ${i + 1}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                />
-              </div>
+              />
             ))}
           </div>
         </section>

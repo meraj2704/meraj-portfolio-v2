@@ -9,10 +9,12 @@ export const runtime = "nodejs";
 const handlers = makeItemHandlers(Project, projectSchema as never, {
   onDelete: async (doc) => {
     const p = doc as ProjectDoc;
-    if (p.cover?.publicId) await destroyAsset(p.cover.publicId);
-    for (const img of p.gallery ?? []) {
-      if (img.publicId) await destroyAsset(img.publicId);
-    }
+    // Clean up every Cloudinary asset in parallel so the request returns fast.
+    const publicIds = [
+      p.cover?.publicId,
+      ...(p.gallery ?? []).map((img) => img.publicId),
+    ].filter((id): id is string => Boolean(id));
+    await Promise.all(publicIds.map((id) => destroyAsset(id)));
   },
 });
 

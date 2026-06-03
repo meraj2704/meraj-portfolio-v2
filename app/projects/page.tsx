@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
 import Footer from "@/components/Footer";
+import { stripHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,13 @@ export default async function ProjectsIndex() {
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen text-white">
-      <header className="px-5 md:px-10 pt-28 md:pt-36 pb-10 md:pb-16">
+      <header className="px-5 md:px-10 pt-14 md:pt-20 pb-10 md:pb-16">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 mb-8 md:mb-12 text-[12px] tracking-[0.14em] uppercase text-white/60 no-underline hover:text-white transition-colors"
+        >
+          ← Back to home
+        </Link>
         <p className="text-[11px] tracking-[0.16em] uppercase text-white/40 mb-4">
           Selected work
         </p>
@@ -66,7 +73,7 @@ export default async function ProjectsIndex() {
                       {p.title}
                     </h3>
                     <p className="text-xs text-white/40 mt-0.5 truncate">
-                      {p.category || p.summary?.slice(0, 80) || ""}
+                      {p.category || stripHtml(p.summary).slice(0, 80) || ""}
                     </p>
                   </div>
                   {p.year && (

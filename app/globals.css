@@ -105,3 +105,97 @@ body {
   from { opacity: 0; transform: translateY(60px) rotateX(-90deg); }
   to   { opacity: 1; transform: translateY(0) rotateX(0); }
 }
+
+/* ───────────────────────────────────────────────────────────────
+   Rich text editor (Quill / react-quill-new) inside admin forms.
+   Themed to match the other admin inputs (gray-200 border, rounded).
+   ─────────────────────────────────────────────────────────────── */
+.rich-text-field .ql-toolbar.ql-snow {
+  border-color: #e5e7eb;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  background: #f9fafb;
+}
+.rich-text-field .ql-container.ql-snow {
+  border-color: #e5e7eb;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  /* Quill defaults to height:100%, which collapses against an indefinite
+     flex/grid parent and makes the next field overlap this editor. */
+  height: auto;
+}
+.rich-text-field .ql-editor {
+  height: auto;
+  min-height: 160px;
+  max-height: 360px;
+  overflow-y: auto;
+  color: var(--color-primary-text);
+}
+.rich-text-field .ql-editor.ql-blank::before {
+  color: rgba(107, 114, 128, 0.5);
+  font-style: normal;
+}
+.rich-text-field:focus-within .ql-toolbar.ql-snow,
+.rich-text-field:focus-within .ql-container.ql-snow {
+  border-color: var(--color-primary);
+}
+.rich-text-field .ql-toolbar.ql-snow button:hover .ql-stroke,
+.rich-text-field .ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: var(--color-primary);
+}
+.rich-text-field .ql-toolbar.ql-snow button:hover .ql-fill,
+.rich-text-field .ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: var(--color-primary);
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Rendered rich-text content on public pages (`.rich-content`).
+   Tailwind's preflight strips list/heading styles, so restore them.
+   Color is inherited so callers keep their own text color.
+   ─────────────────────────────────────────────────────────────── */
+.rich-content > :first-child { margin-top: 0; }
+.rich-content > :last-child { margin-bottom: 0; }
+.rich-content p { margin: 0 0 1em; }
+.rich-content h2 { font-size: 1.5em; font-weight: 700; letter-spacing: -0.02em; margin: 1.4em 0 0.5em; }
+.rich-content h3 { font-size: 1.25em; font-weight: 700; margin: 1.3em 0 0.5em; }
+.rich-content h4 { font-size: 1.1em; font-weight: 600; margin: 1.2em 0 0.5em; }
+.rich-content strong { font-weight: 700; }
+.rich-content em { font-style: italic; }
+.rich-content u { text-decoration: underline; }
+.rich-content s { text-decoration: line-through; }
+.rich-content a { text-decoration: underline; text-underline-offset: 2px; }
+.rich-content a:hover { opacity: 0.75; }
+.rich-content blockquote {
+  border-left: 2px solid currentColor;
+  padding-left: 1em;
+  margin: 0 0 1em;
+  opacity: 0.8;
+}
+.rich-content pre {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.85em 1em;
+  margin: 0 0 1em;
+  overflow-x: auto;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+}
+.rich-content ul,
+.rich-content ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+  counter-reset: rc-list;
+}
+.rich-content ul { list-style: disc; }
+.rich-content ol { list-style: decimal; }
+.rich-content li { margin: 0.3em 0; }
+/* Quill 2 serializes lists as <ol><li data-list="bullet|ordered"> and draws
+   the marker via ::before — replicate it so markers show outside the editor. */
+.rich-content li[data-list] { list-style: none; position: relative; }
+.rich-content li[data-list="ordered"] { counter-increment: rc-list; }
+.rich-content li[data-list]::before { position: absolute; left: -1.3em; }
+.rich-content li[data-list="bullet"]::before { content: "•"; }
+.rich-content li[data-list="ordered"]::before { content: counter(rc-list) "."; }

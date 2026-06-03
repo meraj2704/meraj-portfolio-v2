@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
-import { ImageField, type UploadedImage } from "./ImageField";
-import { MultiImageField } from "./MultiImageField";
+import { ArrowUpDown, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,49 +11,38 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DataTable, type Column } from "@/components/table/DataTable";
-import { InputField } from "@/components/inputs/InputField";
-import { TextAreaField } from "@/components/inputs/TextAreaField";
-import { ToggleField } from "@/components/inputs/ToggleField";
-import { SelectField } from "@/components/inputs/SelectField";
+import { FieldInput } from "./FieldInput";
+import { ReorderDialog } from "./ReorderDialog";
+import { renderCell } from "./renderCell";
+import type { Field, Item, Row } from "./resource-types";
 
-type FieldType =
-  | "text"
-  | "textarea"
-  | "number"
-  | "boolean"
-  | "image"
-  | "gallery"
-  | "tags"
-  | "select";
-
-export type Field = {
-  name: string;
-  label: string;
-  type: FieldType;
-  required?: boolean;
-  folder?: string;
-  options?: { label: string; value: string | number }[];
-};
-
-type Item = Record<string, unknown> & { _id?: string };
-type Row = Item & { id: string };
+export type { Field, FieldType } from "./resource-types";
 
 export function ResourceManager({
   title,
   endpoint,
   fields,
   listColumns,
+  orderable: orderableProp,
 }: {
   title: string;
   endpoint: string;
   fields: Field[];
   listColumns: string[];
+  /** Enables the drag-and-drop Reorder modal and auto-assigns `order` on create.
+   *  Defaults to true when an "order" field is present in the form. */
+  orderable?: boolean;
 }) {
   const [items, setItems] = useState<Item[]>([]);
   const [editing, setEditing] = useState<Item | null>(null);
+  const [reordering, setReordering] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const orderable = orderableProp ?? fields.some((f) => f.name === "order");
+  const imageField = fields.find((f) => f.type === "image");
+  const labelKey = listColumns[0] ?? "title";
 
   async function load() {
     setLoading(true);
@@ -95,16 +82,32 @@ export function ResourceManager({
       const method = isNew ? "POST" : "PATCH";
       const payload: Item = { ...editing };
       delete payload._id;
+      // New orderable items go to the end of the list automatically (order is
+      // managed only via the Reorder modal, so there's no order input).
+      if (isNew && orderable && payload.order == null) {
+        const maxOrder = items.reduce(
+          (max, it) => Math.max(max, Number(it.order ?? 0)),
+          -1,
+        );
+        payload.order = maxOrder + 1;
+      }
       const res = await fetch(url, {
         method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
       const body = await res.json();
-      if (!res.ok)
-        throw new Error(
-          body.error || JSON.stringify(body.details) || "Save failed",
-        );
+      if (!res.ok) {
+        const fieldErrors = body?.details?.fieldErrors as
+          | Record<string, string[]>
+          | undefined;
+        const detail = fieldErrors
+          ? Object.entries(fieldErrors)
+              .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+              .join(" · ")
+          : "";
+        throw new Error(detail || body.error || "Save failed");
+      }
       setEditing(null);
       await load();
     } catch (err) {
@@ -116,8 +119,21 @@ export function ResourceManager({
 
   async function remove(id: string) {
     if (!confirm("Delete this item?")) return;
-    const res = await fetch(`${endpoint}/${id}`, { method: "DELETE" });
-    if (res.ok) await load();
+    // Optimistic: drop the row immediately so the UI updates instantly even
+    // while the server finishes its (slow) Cloudinary asset cleanup.
+    const prev = items;
+    setItems((cur) => cur.filter((it) => String(it._id) !== id));
+    setError(null);
+    try {
+      const res = await fetch(`${endpoint}/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Delete failed");
+      }
+    } catch (err) {
+      setItems(prev); // rollback
+      setError(err instanceof Error ? err.message : "Delete failed");
+    }
   }
 
   const rows: Row[] = items.map((it) => ({ ...it, id: String(it._id) }));
@@ -161,11 +177,29 @@ export function ResourceManager({
     <div className="text-primary-text">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-primary-text">{title}</h1>
-        <Button onClick={() => setEditing(newItem())}>
-          <Plus className="size-4" />
-          New {singular}
-        </Button>
+        <div className="flex items-center gap-2">
+          {orderable && (
+            <Button
+              variant="secondary"
+              onClick={() => setReordering(true)}
+              disabled={loading || items.length < 2}
+            >
+              <ArrowUpDown className="size-4" />
+              Reorder
+            </Button>
+          )}
+          <Button onClick={() => setEditing(newItem())}>
+            <Plus className="size-4" />
+            New {singular}
+          </Button>
+        </div>
       </div>
+
+      {error && !editing && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+          {error}
+        </div>
+      )}
 
       <DataTable data={rows} columns={columns} isLoading={loading} />
 
@@ -218,136 +252,25 @@ export function ResourceManager({
           )}
         </DialogContent>
       </Dialog>
+
+      {orderable && reordering && (
+        <ReorderDialog
+          onClose={() => setReordering(false)}
+          title={title}
+          rows={rows}
+          endpoint={endpoint}
+          getLabel={(item) => {
+            const v = item[labelKey];
+            return v == null ? String(item._id) : String(v);
+          }}
+          getThumb={(item) => {
+            if (!imageField) return null;
+            const img = item[imageField.name] as { url?: string } | null;
+            return img?.url ?? null;
+          }}
+          onSaved={load}
+        />
+      )}
     </div>
   );
-}
-
-function FieldInput({
-  field,
-  value,
-  onChange,
-}: {
-  field: Field;
-  value: unknown;
-  onChange: (v: unknown) => void;
-}) {
-  if (field.type === "image") {
-    return (
-      <ImageField
-        label={field.label}
-        value={(value as UploadedImage) ?? null}
-        onChange={onChange}
-        folder={field.folder}
-      />
-    );
-  }
-  if (field.type === "gallery") {
-    return (
-      <MultiImageField
-        label={field.label}
-        value={(value as UploadedImage[]) ?? []}
-        onChange={onChange}
-        folder={field.folder}
-      />
-    );
-  }
-  if (field.type === "textarea") {
-    return (
-      <TextAreaField
-        label={field.label}
-        required={field.required}
-        value={(value as string) ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    );
-  }
-  if (field.type === "boolean") {
-    return (
-      <ToggleField
-        label={field.label}
-        required={field.required}
-        checked={!!value}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-    );
-  }
-  if (field.type === "select") {
-    return (
-      <SelectField
-        label={field.label}
-        required={field.required}
-        options={field.options ?? []}
-        value={(value as string) ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    );
-  }
-  if (field.type === "number") {
-    return (
-      <InputField
-        label={field.label}
-        required={field.required}
-        type="number"
-        value={(value as number) ?? 0}
-        onChange={(e) => onChange(Number(e.target.value))}
-      />
-    );
-  }
-  if (field.type === "tags") {
-    const arr = Array.isArray(value) ? (value as string[]) : [];
-    return (
-      <InputField
-        label={`${field.label} (comma separated)`}
-        value={arr.join(", ")}
-        onChange={(e) =>
-          onChange(
-            e.target.value
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean),
-          )
-        }
-      />
-    );
-  }
-  return (
-    <InputField
-      label={field.label}
-      required={field.required}
-      type="text"
-      value={(value as string) ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-}
-
-function renderCell(v: unknown): React.ReactNode {
-  if (v == null) return "";
-  if (typeof v === "boolean") {
-    return (
-      <span
-        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-          v ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"
-        }`}
-      >
-        {v ? "Yes" : "No"}
-      </span>
-    );
-  }
-  if (typeof v === "object") {
-    const o = v as Record<string, unknown>;
-    if (typeof o.url === "string") {
-      // eslint-disable-next-line @next/next/no-img-element
-      return (
-        <img
-          src={o.url as string}
-          alt=""
-          className="h-9 w-9 rounded-md border border-gray-100 object-cover"
-        />
-      );
-    }
-    if (Array.isArray(v)) return `${v.length} items`;
-    return JSON.stringify(v).slice(0, 60);
-  }
-  return String(v);
 }

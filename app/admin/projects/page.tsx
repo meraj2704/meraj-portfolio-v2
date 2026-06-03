@@ -7,12 +7,13 @@ export default function ProjectsAdmin() {
     <ResourceManager
       title="Projects"
       endpoint="/api/projects"
+      orderable
       listColumns={["title", "slug", "featured", "order"]}
       fields={[
         { name: "title", label: "Title", type: "text", required: true },
         { name: "slug", label: "Slug (lowercase-dashes)", type: "text", required: true },
-        { name: "summary", label: "Summary", type: "textarea" },
-        { name: "description", label: "Description", type: "textarea" },
+        { name: "summary", label: "Summary", type: "richtext" },
+        { name: "description", label: "Description", type: "richtext" },
         { name: "client", label: "Client", type: "text" },
         { name: "year", label: "Year", type: "text" },
         { name: "category", label: "Category", type: "text" },
@@ -22,7 +23,6 @@ export default function ProjectsAdmin() {
         { name: "liveUrl", label: "Live URL", type: "text" },
         { name: "sourceUrl", label: "Source URL", type: "text" },
         { name: "featured", label: "Featured", type: "boolean" },
-        { name: "order", label: "Order", type: "number" },
       ]}
     />
   );
