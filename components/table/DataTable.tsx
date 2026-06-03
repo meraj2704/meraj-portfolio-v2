@@ -39,7 +39,7 @@ export function DataTable<T extends { id: string | number }>({
                 {columns.map((col, idx) => (
                   <th
                     key={idx}
-                    className={`px-6 py-4 text-xs font-bold text-secondary-text uppercase tracking-wider ${col.className}`}
+                    className={`px-4 py-3 md:px-6 md:py-4 text-xs font-bold text-secondary-text uppercase tracking-wider whitespace-nowrap ${col.className}`}
                   >
                     {col.header}
                   </th>
@@ -63,7 +63,7 @@ export function DataTable<T extends { id: string | number }>({
                     {columns.map((col, idx) => (
                       <td
                         key={idx}
-                        className={`px-6 py-4 text-sm text-primary-text ${col.className}`}
+                        className={`px-4 py-3 md:px-6 md:py-4 text-sm text-primary-text ${col.className}`}
                       >
                         {typeof col.accessor === "function"
                           ? col.accessor(item)

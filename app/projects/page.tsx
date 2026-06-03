@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
 import Footer from "@/components/Footer";
+import { getSiteProfile } from "@/lib/about";
 import { stripHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ async function getProjects() {
 }
 
 export default async function ProjectsIndex() {
-  const projects = await getProjects();
+  const [projects, profile] = await Promise.all([getProjects(), getSiteProfile()]);
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen text-white">
@@ -88,7 +89,7 @@ export default async function ProjectsIndex() {
         </section>
       )}
 
-      <Footer />
+      <Footer profile={profile} />
     </main>
   );
 }

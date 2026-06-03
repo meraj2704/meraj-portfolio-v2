@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
 import Footer from "@/components/Footer";
 import ParallaxImage from "@/components/ParallaxImage";
+import { getSiteProfile } from "@/lib/about";
 import { stripHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,7 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const [project, profile] = await Promise.all([getProject(slug), getSiteProfile()]);
   if (!project) notFound();
 
   const meta: Array<{ label: string; value: string; href?: string }> = [];
@@ -187,7 +188,7 @@ export default async function ProjectDetailPage({
         )}
       </div>
 
-      <Footer />
+      <Footer profile={profile} />
     </main>
   );
 }

@@ -189,8 +189,11 @@ export default function AboutAdmin() {
           ) : (
             <div className="flex flex-col gap-2">
               {socials.map((s, i) => (
-                <div key={i} className="flex items-end gap-2">
-                  <div className="w-40 shrink-0">
+                <div
+                  key={i}
+                  className="flex flex-col gap-2 sm:flex-row sm:items-end"
+                >
+                  <div className="w-full sm:w-40 sm:shrink-0">
                     <InputField
                       label={i === 0 ? "Label" : ""}
                       placeholder="GitHub"
@@ -209,7 +212,7 @@ export default function AboutAdmin() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="size-10 shrink-0 text-red-500 hover:bg-red-50 hover:text-red-600"
+                    className="size-10 shrink-0 self-end text-red-500 hover:bg-red-50 hover:text-red-600 sm:self-auto"
                     onClick={() => removeSocial(i)}
                   >
                     <Trash2 className="size-4" />

@@ -9,21 +9,24 @@ import StackSection from "../components/StackSection";
 import AwardsSection from "../components/AwardsSection";
 import CtaSection from "../components/CtaSection";
 import Footer from "../components/Footer";
+import { getSiteProfile } from "../lib/about";
 
-export default function Home() {
+export default async function Home() {
+  const profile = await getSiteProfile();
+
   return (
     <>
-      <HeroSection />
+      <HeroSection profile={profile} />
       <PhotoReveal />
       <FeaturedSection />
-      <AboutMeSection />
+      <AboutMeSection profile={profile} />
       <ClientsArch />
       <ExpertiseSection />
       <ExperienceSection />
       <StackSection />
       <AwardsSection />
-      <CtaSection />
-      <Footer />
+      <CtaSection profile={profile} />
+      <Footer profile={profile} />
     </>
   );
 }

@@ -1,41 +1,14 @@
-"use client";
+import { connectDB } from "@/lib/db";
+import { Expertise, type ExpertiseDoc } from "@/models/Expertise";
 
-import React from "react";
+export default async function ExpertiseSection() {
+  await connectDB();
+  const items = await Expertise.find()
+    .sort({ order: 1, createdAt: -1 })
+    .lean<ExpertiseDoc[]>();
 
-const expertise = [
-  {
-    num: "1",
-    title: "APP DESIGN",
-    desc: "Craft intuitive navigation that makes features accessible. Choose layouts and graphics that fit your app's personality.",
-    span: 2,
-  },
-  {
-    num: "2",
-    title: "WEB DESIGN",
-    desc: "Polish animations and microinteractions that add delight. Every detail matters when sculpting an web.",
-    span: 2,
-  },
-  {
-    num: "3",
-    title: "FRAMER",
-    desc: "The process involves building virtual 3D models and materials, setting lighting, and then rendering the final images.",
-    span: 2,
-  },
-  {
-    num: "4",
-    title: "PHOTOGRAPHY PRO",
-    desc: "With the click of a shutter, an image is imprinted that tells a story or makes a statement. an image is imprinted that tells a story or makes a statement.",
-    span: 3,
-  },
-  {
-    num: "5",
-    title: "MOTION GRAPHICS",
-    desc: "The interplay between graphic elements, typography and movement opens up a world of creative possibilities. typography and movement.",
-    span: 3,
-  },
-];
+  if (items.length === 0) return null;
 
-export default function ExpertiseSection() {
   return (
     <section className="py-30 bg-black" id="expertise">
       <div className="w-full mx-auto px-5 md:px-8">
@@ -44,18 +17,18 @@ export default function ExpertiseSection() {
         </h2>
 
         <div className="grid grid-cols-6 gap-4">
-          {expertise.map((item) => (
+          {items.map((item, index) => (
             <div
-              key={item.num}
+              key={String(item._id)}
               className={`group bg-[#0a0a0a] border border-white/[0.03] rounded-xl p-5 md:p-8 flex flex-col transition-[background,border-color] duration-300 hover:bg-[#111] hover:border-white/[0.08] ${
-                item.span === 2
-                  ? "col-span-6 md:col-span-2"
-                  : "col-span-6 md:col-span-3"
+                Number(item.span) === 3
+                  ? "col-span-6 md:col-span-3"
+                  : "col-span-6 md:col-span-2"
               }`}
             >
               <div className="flex justify-between items-start mb-6">
                 <span className="text-[11px] font-bold tracking-[0.1em] text-white">
-                  ({item.num})
+                  ({index + 1})
                 </span>
                 <button
                   className="w-8 h-8 rounded-full bg-[#111] border border-white/5 text-white/60 flex items-center justify-center cursor-pointer transition-all duration-300 group-hover:bg-[#222] group-hover:text-white"
@@ -74,9 +47,12 @@ export default function ExpertiseSection() {
               <h3 className="text-xl font-extrabold tracking-[-0.01em] text-white mb-4 uppercase">
                 {item.title}
               </h3>
-              <p className="text-sm leading-[1.6] text-white/50 max-w-[90%]">
-                {item.desc}
-              </p>
+              {item.desc && (
+                <div
+                  className="text-sm leading-[1.6] text-white/50 max-w-[90%]"
+                  dangerouslySetInnerHTML={{ __html: item.desc }}
+                />
+              )}
             </div>
           ))}
         </div>

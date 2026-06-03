@@ -2,10 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import type { SiteProfile } from "@/lib/about";
 
-export default function AboutMeSection() {
+export default function AboutMeSection({ profile }: { profile: SiteProfile }) {
   const nameRef = useRef<HTMLHeadingElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+
+  const name = profile.name || "Meraj Hossain";
+  const firstName = name.trim().split(/\s+/)[0];
+  const avatarUrl = profile.avatarUrl || "/meraj-profile.jpg";
+  const lead = profile.lead || "My creative spirit comes alive in the digital realm.";
+  const resumeUrl = profile.resumeUrl || "/resume.pdf";
 
   useEffect(() => {
     const onScroll = () => {
@@ -43,7 +50,7 @@ export default function AboutMeSection() {
           ref={nameRef}
           className="text-[clamp(3rem,12vw,12rem)] font-black leading-[0.85] tracking-[-0.04em] text-white text-center uppercase whitespace-nowrap will-change-[opacity,transform]"
         >
-          ABOUT MERAJ
+          ABOUT {firstName}
         </h2>
       </div>
 
@@ -51,8 +58,8 @@ export default function AboutMeSection() {
       <div className="relative z-10 flex flex-col items-center   pt-5">
         <div className="relative w-[90%] max-w-[480px] aspect-[3/4] overflow-hidden rounded-4xl mb-10">
           <Image
-            src="/meraj-profile.jpg"
-            alt="Meraj Hossain"
+            src={avatarUrl}
+            alt={name}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 500px"
@@ -60,17 +67,24 @@ export default function AboutMeSection() {
         </div>
         <div className="max-w-[600px] text-center px-6">
           <p className="text-[clamp(1.5rem,3vw,2.2rem)] font-bold leading-[1.2] mb-6 text-white tracking-[-0.02em]">
-            My creative spirit comes alive in the digital realm.
+            {lead}
           </p>
-          <p className="text-base leading-[1.8] text-white/60">
-            With nimble fingers flying across the keyboard, I craft clear
-            experiences out of nothing but ones and zeroes. Full-stack developer
-            and digital designer with a passion for creating premium web
-            experiences. I specialize in React, Next.js, and modern web
-            technologies.
-          </p>
+          {profile.description ? (
+            <div
+              className="rich-content text-base leading-[1.8] text-white/60"
+              dangerouslySetInnerHTML={{ __html: profile.description }}
+            />
+          ) : (
+            <p className="text-base leading-[1.8] text-white/60">
+              With nimble fingers flying across the keyboard, I craft clear
+              experiences out of nothing but ones and zeroes. Full-stack developer
+              and digital designer with a passion for creating premium web
+              experiences. I specialize in React, Next.js, and modern web
+              technologies.
+            </p>
+          )}
           <a
-            href="/resume.pdf"
+            href={resumeUrl}
             download="Meraj-Hossain-Resume.pdf"
             className="group inline-flex items-center gap-3 mt-10 px-6 py-3.5 rounded-full bg-white text-black text-[12px] tracking-[0.18em] uppercase font-semibold no-underline transition-all duration-300 hover:bg-[#4ade80] hover:text-black hover:shadow-[0_0_30px_rgba(74,222,128,0.35)]"
           >
