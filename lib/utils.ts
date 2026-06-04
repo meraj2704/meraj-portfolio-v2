@@ -6,6 +6,18 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Normalize rich-text HTML for display via `dangerouslySetInnerHTML`. Pasted
+ * content often uses a non-breaking space between every word, which stops the
+ * browser from wrapping so the text renders as one long, overflowing line.
+ * Swap them for normal spaces while preserving the markup. Runs on every render,
+ * so content wraps correctly no matter what is stored in the database.
+ */
+export function normalizeRichHtml(html?: string | null): string {
+  if (!html) return "";
+  return html.replace(/&nbsp;|\u00a0/g, " ");
+}
+
+/**
  * Strip HTML tags from rich-text content and collapse whitespace, for places
  * that need plain text (SEO `<meta>` descriptions, truncated card blurbs).
  */

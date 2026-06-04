@@ -7,11 +7,20 @@ const imageSchema = z.object({
   height: z.number().optional(),
 });
 
+// Pasted text (from Word, PDFs, web pages, chat) often arrives with a
+// non-breaking space between every word. The browser never wraps on `&nbsp;`,
+// so the whole paragraph renders as one long, overflowing line. Collapse them
+// to normal spaces on save so rich-text content wraps as expected.
+const richText = z
+  .string()
+  .transform((s) => s.replace(/&nbsp;|\u00a0/g, " "))
+  .default("");
+
 export const projectSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "lowercase, digits, dashes only"),
-  summary: z.string().default(""),
-  description: z.string().default(""),
+  summary: richText,
+  description: richText,
   client: z.string().default(""),
   year: z.string().default(""),
   category: z.string().default(""),

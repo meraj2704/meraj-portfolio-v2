@@ -44,7 +44,7 @@ export default function FeaturedSectionView({
                 alt={project.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
               />
             </div>
             <div className="flex items-center justify-between px-5 py-4 bg-[#0a0a0a]">

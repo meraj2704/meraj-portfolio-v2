@@ -7,6 +7,7 @@ import { TextAreaField } from "@/components/inputs/TextAreaField";
 import { RichTextField } from "@/components/inputs/RichTextField";
 import { ToggleField } from "@/components/inputs/ToggleField";
 import { SelectField } from "@/components/inputs/SelectField";
+import { TagsField } from "@/components/inputs/TagsField";
 import type { Field } from "./resource-types";
 
 export function FieldInput({
@@ -95,17 +96,11 @@ export function FieldInput({
   if (field.type === "tags") {
     const arr = Array.isArray(value) ? (value as string[]) : [];
     return (
-      <InputField
-        label={`${field.label} (comma separated)`}
-        value={arr.join(", ")}
-        onChange={(e) =>
-          onChange(
-            e.target.value
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean),
-          )
-        }
+      <TagsField
+        label={field.label}
+        required={field.required}
+        value={arr}
+        onChange={onChange}
       />
     );
   }

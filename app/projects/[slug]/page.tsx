@@ -5,15 +5,22 @@ import { Project, type ProjectDoc } from "@/models/Project";
 import Footer from "@/components/Footer";
 import ParallaxImage from "@/components/ParallaxImage";
 import { getSiteProfile } from "@/lib/about";
-import { stripHtml } from "@/lib/utils";
+import { normalizeRichHtml, stripHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-type ProjectImage = { url: string; publicId: string; width?: number; height?: number };
+type ProjectImage = {
+  url: string;
+  publicId: string;
+  width?: number;
+  height?: number;
+};
 
 async function getProject(slug: string) {
   await connectDB();
-  const doc = await Project.findOne({ slug: slug.toLowerCase() }).lean<ProjectDoc | null>();
+  const doc = await Project.findOne({
+    slug: slug.toLowerCase(),
+  }).lean<ProjectDoc | null>();
   return doc;
 }
 
@@ -40,15 +47,25 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, profile] = await Promise.all([getProject(slug), getSiteProfile()]);
+  const [project, profile] = await Promise.all([
+    getProject(slug),
+    getSiteProfile(),
+  ]);
   if (!project) notFound();
 
   const meta: Array<{ label: string; value: string; href?: string }> = [];
   if (project.client) meta.push({ label: "Client", value: project.client });
   if (project.year) meta.push({ label: "Year", value: project.year });
-  if (project.category) meta.push({ label: "Category", value: project.category });
-  if (project.liveUrl) meta.push({ label: "Live Project", value: "Visit Site", href: project.liveUrl });
-  if (project.sourceUrl) meta.push({ label: "Source", value: "View Code", href: project.sourceUrl });
+  if (project.category)
+    meta.push({ label: "Category", value: project.category });
+  if (project.liveUrl)
+    meta.push({
+      label: "Live Project",
+      value: "Visit Site",
+      href: project.liveUrl,
+    });
+  if (project.sourceUrl)
+    meta.push({ label: "Source", value: "View Code", href: project.sourceUrl });
 
   const gallery = (project.gallery ?? []) as ProjectImage[];
   const cover = project.cover as ProjectImage;
@@ -67,14 +84,6 @@ export default async function ProjectDetailPage({
             <h1 className="text-[clamp(2.75rem,7vw,6rem)] font-black leading-[0.95] tracking-[-0.04em] uppercase">
               {project.title}
             </h1>
-            {(project.summary || project.description) && (
-              <div
-                className="rich-content mt-6 md:mt-8 max-w-[520px] text-[15px] md:text-[16px] leading-[1.7] text-white/55"
-                dangerouslySetInnerHTML={{
-                  __html: project.summary || project.description || "",
-                }}
-              />
-            )}
           </div>
 
           <dl className="md:mt-4">
@@ -104,18 +113,28 @@ export default async function ProjectDetailPage({
                 </dd>
               </div>
             ))}
-            {meta.length > 0 && <div className="border-t border-white/[0.08]" />}
+            {meta.length > 0 && (
+              <div className="border-t border-white/[0.08]" />
+            )}
           </dl>
         </div>
+        {(project.summary || project.description) && (
+          <div
+            className="rich-content mt-6 md:mt-8 text-[15px] md:text-[16px] leading-[1.7] text-white/55"
+            dangerouslySetInnerHTML={{
+              __html: normalizeRichHtml(project.summary || project.description),
+            }}
+          />
+        )}
       </div>
 
-      <div className="pb-16 md:pb-24">
+      <div className="px-5 md:px-10 pb-16 md:pb-24">
         <ParallaxImage
           src={cover.url}
           alt={project.title}
           priority
-          sizes="100vw"
-          className="w-full aspect-[16/9] bg-[#111]"
+          sizes="(max-width: 768px) 100vw, 90vw"
+          className="w-full aspect-[16/9] bg-[#111] rounded-sm"
         />
       </div>
 
@@ -127,14 +146,14 @@ export default async function ProjectDetailPage({
             </h2>
             <div
               className="rich-content text-[16px] md:text-[18px] leading-[1.7] text-white/75"
-              dangerouslySetInnerHTML={{ __html: project.description ?? "" }}
+              dangerouslySetInnerHTML={{ __html: normalizeRichHtml(project.description) }}
             />
           </div>
         </section>
       )}
 
       {gallery.length > 0 && (
-        <section className="pb-20 md:pb-32">
+        <section className="px-5 md:px-10 pb-20 md:pb-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
             {gallery.map((img, i) => (
               <ParallaxImage
@@ -142,7 +161,7 @@ export default async function ProjectDetailPage({
                 src={img.url}
                 alt={`${project.title} — ${i + 1}`}
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className={`bg-[#111] ${
+                className={`bg-[#111] rounded-sm ${
                   i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
                 }`}
               />

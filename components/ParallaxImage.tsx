@@ -69,7 +69,7 @@ export default function ParallaxImage({
           fill
           priority={priority}
           sizes={sizes}
-          className="object-cover"
+          className="object-contain"
         />
       </div>
     </div>
