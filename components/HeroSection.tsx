@@ -105,17 +105,24 @@ export default function HeroSection({ profile }: { profile: SiteProfile }) {
           AVAILABLE FOR FREELANCE
         </div>
 
-        <h1 className="text-[clamp(2.5rem,14vw,5rem)] md:text-[clamp(3rem,10vw,9rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-center uppercase text-white">
-          {firstName}
-          {restName.length > 0 && (
-            <>
-              <br />
-              {restName.join(" ")}
-            </>
-          )}
+        <h1 className="text-center text-white">
+          <span className="block text-[clamp(2.5rem,14vw,5rem)] md:text-[clamp(3rem,10vw,9rem)] font-extrabold leading-[0.92] tracking-[-0.03em] uppercase">
+            {firstName}
+            {restName.length > 0 && (
+              <>
+                <br />
+                {restName.join(" ")}
+              </>
+            )}
+          </span>
+          <span className="mt-6 block text-[clamp(0.8rem,2.4vw,1.25rem)] font-semibold tracking-[0.18em] uppercase text-white/70">
+            Full-Stack Web Developer
+            <span className="text-[#4ade80]"> · </span>
+            Dhaka, Bangladesh
+          </span>
         </h1>
 
-        <div className="mt-12">
+        <div className="mt-10">
           <ScrollCircle />
         </div>
       </div>

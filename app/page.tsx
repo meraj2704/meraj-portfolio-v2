@@ -4,6 +4,7 @@ import FeaturedSection from "../components/FeaturedSection";
 import AboutMeSection from "../components/AboutMeSection";
 import ClientsArch from "../components/ClientsArch";
 import ExpertiseSection from "../components/ExpertiseSection";
+import ServicesSection from "../components/ServicesSection";
 import ExperienceSection from "../components/ExperienceSection";
 import StackSection from "../components/StackSection";
 import AwardsSection from "../components/AwardsSection";
@@ -22,6 +23,7 @@ export default async function Home() {
       <AboutMeSection profile={profile} />
       <ClientsArch />
       <ExpertiseSection />
+      <ServicesSection />
       <ExperienceSection />
       <StackSection />
       <AwardsSection />
