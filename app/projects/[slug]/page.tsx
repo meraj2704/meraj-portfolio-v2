@@ -109,13 +109,13 @@ export default async function ProjectDetailPage({
         </div>
       </div>
 
-      <div className="px-5 md:px-10 pb-16 md:pb-24">
+      <div className="pb-16 md:pb-24">
         <ParallaxImage
           src={cover.url}
           alt={project.title}
           priority
-          sizes="(max-width: 768px) 100vw, 90vw"
-          className="w-full aspect-[16/9] bg-[#111] rounded-sm"
+          sizes="100vw"
+          className="w-full aspect-[16/9] bg-[#111]"
         />
       </div>
 
@@ -134,7 +134,7 @@ export default async function ProjectDetailPage({
       )}
 
       {gallery.length > 0 && (
-        <section className="px-5 md:px-10 pb-20 md:pb-32">
+        <section className="pb-20 md:pb-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
             {gallery.map((img, i) => (
               <ParallaxImage
@@ -142,7 +142,7 @@ export default async function ProjectDetailPage({
                 src={img.url}
                 alt={`${project.title} — ${i + 1}`}
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className={`bg-[#111] rounded-sm ${
+                className={`bg-[#111] ${
                   i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
                 }`}
               />
