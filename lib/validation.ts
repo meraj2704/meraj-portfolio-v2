@@ -33,6 +33,17 @@ export const experienceSchema = z.object({
   order: z.number().default(0),
 });
 
+export const expertiseSchema = z.object({
+  title: z.string().min(1),
+  desc: z.string().default(""),
+  // <select> submits a string, so coerce; only standard (2) or wide (3) allowed.
+  span: z
+    .preprocess((v) => (v === "" || v == null ? 2 : v), z.coerce.number())
+    .refine((n) => n === 2 || n === 3, "width must be 2 or 3")
+    .default(2),
+  order: z.number().default(0),
+});
+
 export const awardSchema = z.object({
   award: z.string().min(1),
   project: z.string().min(1),

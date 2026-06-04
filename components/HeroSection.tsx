@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import type { SiteProfile } from "@/lib/about";
 
 function useLiveClock() {
   const [time, setTime] = useState("");
@@ -44,8 +45,18 @@ function ScrollCircle() {
   );
 }
 
-export default function HeroSection() {
+export default function HeroSection({ profile }: { profile: SiteProfile }) {
   const clock = useLiveClock();
+
+  const name = profile.name || "Meraj Hossain";
+  const [firstName, ...restName] = name.trim().split(/\s+/);
+  const headline = profile.headline || "FULL-STACK DEVELOPER + DIGITAL DESIGNER";
+  const location = profile.location || "Dhaka, BD";
+  const resumeUrl = profile.resumeUrl || "/resume.pdf";
+  const github = profile.socials.find(
+    (s) => /github/i.test(s.label) || /github\.com/i.test(s.url)
+  );
+  const githubUrl = github?.url || "https://github.com/meraj";
 
   return (
     <section className="relative w-full h-screen min-h-[600px] bg-black flex flex-col justify-between overflow-hidden">
@@ -71,14 +82,14 @@ export default function HeroSection() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="/resume.pdf"
+            href={resumeUrl}
             target="_blank"
             className="inline-flex items-center justify-center text-[11px] tracking-[0.14em] uppercase text-white font-medium border border-solid border-white/40 rounded-full px-5.5 py-2.5 leading-none no-underline transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
           >
             RESUME
           </Link>
           <Link
-            href="https://github.com/meraj"
+            href={githubUrl}
             target="_blank"
             className="inline-flex items-center justify-center text-[11px] tracking-[0.14em] uppercase text-white font-medium border border-solid border-white/40 rounded-full px-5.5 py-2.5 leading-none no-underline transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
           >
@@ -95,9 +106,13 @@ export default function HeroSection() {
         </div>
 
         <h1 className="text-[clamp(2.5rem,14vw,5rem)] md:text-[clamp(3rem,10vw,9rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-center uppercase text-white">
-          MERAJ
-          <br />
-          HOSSAIN
+          {firstName}
+          {restName.length > 0 && (
+            <>
+              <br />
+              {restName.join(" ")}
+            </>
+          )}
         </h1>
 
         <div className="mt-12">
@@ -107,9 +122,11 @@ export default function HeroSection() {
 
       {/* Bottom bar */}
       <div className="z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-0 px-5 py-4 md:px-8 md:py-6">
-        <span className="text-[11px] tracking-[0.16em] uppercase text-white/70">BASED IN DHAKA, BD</span>
+        <span className="text-[11px] tracking-[0.16em] uppercase text-white/70">
+          BASED IN {location}
+        </span>
         <span className="text-[11px] tracking-[0.14em] uppercase text-white/70 font-medium">
-          FULL-STACK DEVELOPER <span className="text-white/40 mx-1">+</span> DIGITAL DESIGNER
+          {headline}
         </span>
       </div>
     </section>
