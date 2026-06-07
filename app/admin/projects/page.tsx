@@ -14,6 +14,7 @@ export default function ProjectsAdmin() {
         { name: "slug", label: "Slug (lowercase-dashes)", type: "text", required: true },
         { name: "summary", label: "Summary", type: "richtext" },
         { name: "description", label: "Description", type: "richtext" },
+        { name: "contributions", label: "My contributions & impact", type: "richtext" },
         { name: "client", label: "Client", type: "text" },
         { name: "year", label: "Year", type: "text" },
         { name: "category", label: "Category", type: "text" },

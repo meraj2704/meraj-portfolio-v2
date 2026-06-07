@@ -31,6 +31,7 @@ export const projectSchema = z.object({
   slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "lowercase, digits, dashes only"),
   summary: richText,
   description: richText,
+  contributions: richText,
   client: z.string().default(""),
   year: z.string().default(""),
   category: z.string().default(""),

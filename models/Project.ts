@@ -16,6 +16,7 @@ const ProjectSchema = new Schema(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     summary: { type: String, default: "" },
     description: { type: String, default: "" },
+    contributions: { type: String, default: "" },
     client: { type: String, default: "" },
     year: { type: String, default: "" },
     category: { type: String, default: "" },

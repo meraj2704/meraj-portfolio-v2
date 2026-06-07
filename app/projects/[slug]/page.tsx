@@ -165,6 +165,20 @@ export default async function ProjectDetailPage({
         </section>
       )}
 
+      {project.contributions && (
+        <section className="px-5 md:px-10 pb-20 md:pb-32">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 md:gap-16 max-w-[1400px]">
+            <h2 className="text-[11px] tracking-[0.16em] uppercase text-white/40">
+              My contributions &amp; impact
+            </h2>
+            <div
+              className="rich-content text-[16px] md:text-[18px] leading-[1.7] text-white/75"
+              dangerouslySetInnerHTML={{ __html: normalizeRichHtml(project.contributions) }}
+            />
+          </div>
+        </section>
+      )}
+
       {gallery.length > 0 && (
         <section className=" pb-20 md:pb-32">
           <div className="columns-1 md:columns-2 gap-2 md:gap-3">
