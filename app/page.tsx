@@ -3,7 +3,6 @@ import PhotoReveal from "../components/PhotoReveal";
 import FeaturedSection from "../components/FeaturedSection";
 import AboutMeSection from "../components/AboutMeSection";
 import ClientsArch from "../components/ClientsArch";
-import ExpertiseSection from "../components/ExpertiseSection";
 import ServicesSection from "../components/ServicesSection";
 import ExperienceSection from "../components/ExperienceSection";
 import StackSection from "../components/StackSection";
@@ -24,7 +23,6 @@ export default async function Home() {
       <FeaturedSection />
       <AboutMeSection profile={profile} />
       <ClientsArch />
-      <ExpertiseSection />
       <ServicesSection />
       <ExperienceSection />
       <StackSection />

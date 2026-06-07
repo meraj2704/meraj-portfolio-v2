@@ -1,33 +1,14 @@
 import Link from "next/link";
+import { connectDB } from "@/lib/db";
+import { normalizeRichHtml } from "@/lib/utils";
+import { Expertise, type ExpertiseDoc } from "@/models/Expertise";
 
-const services = [
-  {
-    title: "Custom Web Application Development",
-    desc: "Full-stack web apps built with Next.js, Nest.js, React and Node.js — fast, scalable, and tailored to your business.",
-  },
-  {
-    title: "SaaS Platform Development",
-    desc: "End-to-end SaaS products: authentication, billing, dashboards and multi-tenant architecture on a modern TypeScript stack.",
-  },
-  {
-    title: "E-commerce Website Development",
-    desc: "High-converting, SEO-friendly online stores with Next.js — optimized for speed, payments and a smooth checkout experience.",
-  },
-  {
-    title: "REST API & Database Integration",
-    desc: "Robust REST APIs with secure database design and integration using PostgreSQL, Prisma and MongoDB.",
-  },
-  {
-    title: "Next.js Performance Optimization",
-    desc: "Speed audits and Core Web Vitals tuning to make your existing site load faster and rank higher on Google.",
-  },
-  {
-    title: "MERN Stack Development",
-    desc: "MongoDB, Express, React and Node.js applications — from MVPs to production-ready, maintainable codebases.",
-  },
-];
+export default async function ServicesSection() {
+  await connectDB();
+  const items = await Expertise.find()
+    .sort({ order: 1, createdAt: -1 })
+    .lean<ExpertiseDoc[]>();
 
-export default function ServicesSection() {
   return (
     <section className="py-30 bg-black" id="services">
       <div className="w-full mx-auto px-5 md:px-8">
@@ -45,24 +26,48 @@ export default function ServicesSection() {
           Nest.js.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((service, index) => (
-            <div
-              key={service.title}
-              className="group bg-[#0a0a0a] border border-white/[0.03] rounded-xl p-5 md:p-8 flex flex-col transition-[background,border-color] duration-300 hover:bg-[#111] hover:border-white/[0.08]"
-            >
-              <span className="text-[11px] font-bold tracking-[0.1em] text-white mb-6">
-                ({String(index + 1).padStart(2, "0")})
-              </span>
-              <h3 className="text-xl font-extrabold tracking-[-0.01em] text-white mb-4 uppercase">
-                {service.title}
-              </h3>
-              <p className="text-sm leading-[1.6] text-white/50">
-                {service.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+        {items.length > 0 && (
+          <div className="grid grid-cols-6 gap-4">
+            {items.map((item, index) => (
+              <div
+                key={String(item._id)}
+                className={`group min-w-0 bg-[#0a0a0a] border border-white/[0.03] rounded-xl p-5 md:p-8 flex flex-col transition-[background,border-color] duration-300 hover:bg-[#111] hover:border-white/[0.08] ${
+                  Number(item.span) === 3
+                    ? "col-span-6 md:col-span-3"
+                    : "col-span-6 md:col-span-2"
+                }`}
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <span className="text-[11px] font-bold tracking-[0.1em] text-white">
+                    ({String(index + 1).padStart(2, "0")})
+                  </span>
+                  <button
+                    className="w-8 h-8 rounded-full bg-[#111] border border-white/5 text-white/60 flex items-center justify-center cursor-pointer transition-all duration-300 group-hover:bg-[#222] group-hover:text-white"
+                    aria-label="Learn more"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                      <path
+                        d="M7 1V13M1 7H13"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <h3 className="text-xl font-extrabold tracking-[-0.01em] text-white mb-4 uppercase">
+                  {item.title}
+                </h3>
+                {item.desc && (
+                  <div
+                    className="text-sm leading-[1.6] text-white/50 max-w-[90%] break-words"
+                    dangerouslySetInnerHTML={{ __html: normalizeRichHtml(item.desc) }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-14 flex flex-col sm:flex-row items-start sm:items-center gap-5">
           <p className="text-base md:text-lg text-white/70 max-w-[480px]">
