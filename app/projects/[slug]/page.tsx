@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import ParallaxImage from "@/components/ParallaxImage";
 import { getSiteProfile } from "@/lib/about";
 import { normalizeRichHtml, stripHtml } from "@/lib/utils";
 
@@ -139,15 +140,13 @@ export default async function ProjectDetailPage({
       </div>
 
       {cover?.url && (
-        <div className="px-5 md:px-10 pb-16 md:pb-24">
-          <Image
+        <div className=" pb-16 md:pb-24">
+          <ParallaxImage
             src={cover.url}
             alt={project.title}
-            width={imageDims(cover).width}
-            height={imageDims(cover).height}
             priority
             sizes="(max-width: 768px) 100vw, 90vw"
-            className="w-full h-auto bg-[#111] rounded-sm"
+            className="w-full aspect-video bg-[#111] "
           />
         </div>
       )}
@@ -167,7 +166,7 @@ export default async function ProjectDetailPage({
       )}
 
       {gallery.length > 0 && (
-        <section className="px-5 md:px-10 pb-20 md:pb-32">
+        <section className=" pb-20 md:pb-32">
           <div className="columns-1 md:columns-2 gap-2 md:gap-3">
             {gallery.map((img, i) => {
               const { width, height } = imageDims(img);
@@ -179,7 +178,7 @@ export default async function ProjectDetailPage({
                   width={width}
                   height={height}
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="w-full h-auto mb-2 md:mb-3 bg-[#111] rounded-sm break-inside-avoid"
+                  className="w-full h-auto mb-2 md:mb-3 bg-[#111]  break-inside-avoid"
                 />
               );
             })}
