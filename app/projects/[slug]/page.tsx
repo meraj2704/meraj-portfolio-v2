@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Project, type ProjectDoc } from "@/models/Project";
+import Image from "next/image";
 import Footer from "@/components/Footer";
-import ParallaxImage from "@/components/ParallaxImage";
 import { getSiteProfile } from "@/lib/about";
 import { normalizeRichHtml, stripHtml } from "@/lib/utils";
 
@@ -15,6 +15,16 @@ type ProjectImage = {
   width?: number;
   height?: number;
 };
+
+// Screenshots arrive in many aspect ratios. Render each at its natural size (using the
+// dimensions captured on upload) so the image fills the available width with the height
+// following automatically — no fixed-aspect box, so no empty letterbox bands.
+function imageDims(img: ProjectImage) {
+  return {
+    width: img.width && img.width > 0 ? img.width : 1600,
+    height: img.height && img.height > 0 ? img.height : 900,
+  };
+}
 
 async function getProject(slug: string) {
   await connectDB();
@@ -130,12 +140,14 @@ export default async function ProjectDetailPage({
 
       {cover?.url && (
         <div className="px-5 md:px-10 pb-16 md:pb-24">
-          <ParallaxImage
+          <Image
             src={cover.url}
             alt={project.title}
+            width={imageDims(cover).width}
+            height={imageDims(cover).height}
             priority
             sizes="(max-width: 768px) 100vw, 90vw"
-            className="w-full aspect-[16/9] bg-[#111] rounded-sm"
+            className="w-full h-auto bg-[#111] rounded-sm"
           />
         </div>
       )}
@@ -156,18 +168,21 @@ export default async function ProjectDetailPage({
 
       {gallery.length > 0 && (
         <section className="px-5 md:px-10 pb-20 md:pb-32">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-            {gallery.map((img, i) => (
-              <ParallaxImage
-                key={img.publicId || i}
-                src={img.url}
-                alt={`${project.title} — ${i + 1}`}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className={`bg-[#111] rounded-sm ${
-                  i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
-                }`}
-              />
-            ))}
+          <div className="columns-1 md:columns-2 gap-2 md:gap-3">
+            {gallery.map((img, i) => {
+              const { width, height } = imageDims(img);
+              return (
+                <Image
+                  key={img.publicId || i}
+                  src={img.url}
+                  alt={`${project.title} — ${i + 1}`}
+                  width={width}
+                  height={height}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="w-full h-auto mb-2 md:mb-3 bg-[#111] rounded-sm break-inside-avoid"
+                />
+              );
+            })}
           </div>
         </section>
       )}
