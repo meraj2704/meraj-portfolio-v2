@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { connectDB } from "@/lib/db";
+import { normalizeRichHtml } from "@/lib/utils";
 import { Stack, type StackDoc } from "@/models/Stack";
 import {
   splitContainer,
@@ -53,7 +54,7 @@ export default async function StackSection() {
                 {item.desc && (
                   <div
                     className={splitItemDesc}
-                    dangerouslySetInnerHTML={{ __html: item.desc }}
+                    dangerouslySetInnerHTML={{ __html: normalizeRichHtml(item.desc) }}
                   />
                 )}
               </div>

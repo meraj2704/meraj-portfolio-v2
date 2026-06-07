@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sanitizeRichHtml } from "./sanitize";
 
 const imageSchema = z.object({
   url: z.string().url(),
@@ -7,13 +8,15 @@ const imageSchema = z.object({
   height: z.number().optional(),
 });
 
-// Pasted text (from Word, PDFs, web pages, chat) often arrives with a
-// non-breaking space between every word. The browser never wraps on `&nbsp;`,
-// so the whole paragraph renders as one long, overflowing line. Collapse them
-// to normal spaces on save so rich-text content wraps as expected.
+// Every rich-text field passes through here on save. Two jobs:
+//   1. Sanitize to the editor's allowed tags, so stored HTML is safe to render
+//      with `dangerouslySetInnerHTML` even if it was posted outside the editor.
+//   2. Collapse non-breaking spaces to normal ones. Pasted text (from Word, PDFs,
+//      web pages, chat) often uses `&nbsp;` between every word; the browser never
+//      wraps on those, so the paragraph renders as one long, overflowing line.
 const richText = z
   .string()
-  .transform((s) => s.replace(/&nbsp;|\u00a0/g, " "))
+  .transform((s) => sanitizeRichHtml(s).replace(/&nbsp;|\u00a0/g, " "))
   .default("");
 
 export const projectSchema = z.object({
@@ -37,14 +40,14 @@ export const experienceSchema = z.object({
   company: z.string().min(1),
   role: z.string().min(1),
   date: z.string().min(1),
-  desc: z.string().default(""),
+  desc: richText,
   logo: imageSchema.partial().optional(),
   order: z.number().default(0),
 });
 
 export const expertiseSchema = z.object({
   title: z.string().min(1),
-  desc: z.string().default(""),
+  desc: richText,
   // <select> submits a string, so coerce; only standard (2) or wide (3) allowed.
   span: z
     .preprocess((v) => (v === "" || v == null ? 2 : v), z.coerce.number())
@@ -57,7 +60,7 @@ export const awardSchema = z.object({
   award: z.string().min(1),
   project: z.string().min(1),
   date: z.string().min(1),
-  desc: z.string().default(""),
+  desc: richText,
   image: imageSchema.partial().optional(),
   order: z.number().default(0),
 });
@@ -66,7 +69,7 @@ export const stackSchema = z.object({
   title: z.string().min(1),
   role: z.string().min(1),
   percent: z.string().default(""),
-  desc: z.string().default(""),
+  desc: richText,
   icon: imageSchema,
   order: z.number().default(0),
 });
@@ -83,7 +86,7 @@ export const aboutSchema = z.object({
   name: z.string().default(""),
   headline: z.string().default(""),
   lead: z.string().default(""),
-  description: z.string().default(""),
+  description: richText,
   location: z.string().default(""),
   email: z.string().default(""),
   phone: z.string().default(""),

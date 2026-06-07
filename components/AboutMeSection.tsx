@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import type { SiteProfile } from "@/lib/about";
+import { normalizeRichHtml } from "@/lib/utils";
 
 export default function AboutMeSection({ profile }: { profile: SiteProfile }) {
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -72,7 +73,7 @@ export default function AboutMeSection({ profile }: { profile: SiteProfile }) {
           {profile.description ? (
             <div
               className="rich-content text-base leading-[1.8] text-white/60"
-              dangerouslySetInnerHTML={{ __html: profile.description }}
+              dangerouslySetInnerHTML={{ __html: normalizeRichHtml(profile.description) }}
             />
           ) : (
             <p className="text-base leading-[1.8] text-white/60">

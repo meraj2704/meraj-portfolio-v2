@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { normalizeRichHtml } from "@/lib/utils";
 import { Experience, type ExperienceDoc } from "@/models/Experience";
 import {
   splitContainer,
@@ -39,7 +40,7 @@ export default async function ExperienceSection() {
               {item.desc && (
                 <div
                   className={splitItemDesc}
-                  dangerouslySetInnerHTML={{ __html: item.desc }}
+                  dangerouslySetInnerHTML={{ __html: normalizeRichHtml(item.desc) }}
                 />
               )}
             </div>

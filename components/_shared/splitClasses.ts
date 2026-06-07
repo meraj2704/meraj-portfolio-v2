@@ -11,7 +11,7 @@ export const splitTitleWrap = "static lg:sticky lg:top-30";
 export const splitTitle =
   "text-[clamp(2.5rem,5vw,4.5rem)] font-extrabold leading-[1.1] tracking-[-0.04em] text-white uppercase";
 
-export const splitList = "flex flex-col";
+export const splitList = "flex flex-col min-w-0";
 
 export const splitItem =
   "py-10 border-b border-white/10 first:pt-0 last:border-b-0 last:pb-0";
@@ -29,4 +29,4 @@ export const splitItemDate =
   "text-[13px] font-bold text-white";
 
 export const splitItemDesc =
-  "text-[15px] leading-[1.7] text-white/50";
+  "text-[15px] leading-[1.7] text-white/50 break-words";

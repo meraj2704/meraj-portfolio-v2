@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { normalizeRichHtml } from "@/lib/utils";
 import { Expertise, type ExpertiseDoc } from "@/models/Expertise";
 
 export default async function ExpertiseSection() {
@@ -20,7 +21,7 @@ export default async function ExpertiseSection() {
           {items.map((item, index) => (
             <div
               key={String(item._id)}
-              className={`group bg-[#0a0a0a] border border-white/[0.03] rounded-xl p-5 md:p-8 flex flex-col transition-[background,border-color] duration-300 hover:bg-[#111] hover:border-white/[0.08] ${
+              className={`group min-w-0 bg-[#0a0a0a] border border-white/[0.03] rounded-xl p-5 md:p-8 flex flex-col transition-[background,border-color] duration-300 hover:bg-[#111] hover:border-white/[0.08] ${
                 Number(item.span) === 3
                   ? "col-span-6 md:col-span-3"
                   : "col-span-6 md:col-span-2"
@@ -49,8 +50,8 @@ export default async function ExpertiseSection() {
               </h3>
               {item.desc && (
                 <div
-                  className="text-sm leading-[1.6] text-white/50 max-w-[90%]"
-                  dangerouslySetInnerHTML={{ __html: item.desc }}
+                  className="text-sm leading-[1.6] text-white/50 max-w-[90%] break-words"
+                  dangerouslySetInnerHTML={{ __html: normalizeRichHtml(item.desc) }}
                 />
               )}
             </div>
