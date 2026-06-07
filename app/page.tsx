@@ -12,6 +12,8 @@ import CtaSection from "../components/CtaSection";
 import Footer from "../components/Footer";
 import { getSiteProfile } from "../lib/about";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const profile = await getSiteProfile();
 
