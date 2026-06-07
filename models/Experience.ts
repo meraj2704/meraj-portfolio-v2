@@ -5,6 +5,7 @@ const ExperienceSchema = new Schema(
     company: { type: String, required: true, trim: true },
     role: { type: String, required: true, trim: true },
     date: { type: String, required: true, trim: true },
+    workMode: { type: String, default: "" },
     desc: { type: String, default: "" },
     logo: {
       url: String,

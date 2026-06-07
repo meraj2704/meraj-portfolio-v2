@@ -40,6 +40,7 @@ export const experienceSchema = z.object({
   company: z.string().min(1),
   role: z.string().min(1),
   date: z.string().min(1),
+  workMode: z.string().default(""),
   desc: richText,
   logo: imageSchema.partial().optional(),
   order: z.number().default(0),
