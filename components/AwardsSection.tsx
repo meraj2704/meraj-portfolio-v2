@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { connectDB } from "@/lib/db";
 import { normalizeRichHtml } from "@/lib/utils";
 import { Award, type AwardDoc } from "@/models/Award";
@@ -31,7 +32,7 @@ export default async function AwardsSection() {
         </div>
         <div className={splitList}>
           {items.map((item) => (
-            <div key={String(item._id)} className={splitItem}>
+            <div key={String(item._id)} className={`${splitItem} group`}>
               <h3 className={splitItemTitle}>{item.award}</h3>
               <div className={splitItemMeta}>
                 <span className={splitItemRole}>{item.project}</span>
@@ -42,6 +43,17 @@ export default async function AwardsSection() {
                   className={splitItemDesc}
                   dangerouslySetInnerHTML={{ __html: normalizeRichHtml(item.desc) }}
                 />
+              )}
+              {item.image?.url && (
+                <div className="mt-5 relative w-full max-w-xl aspect-16/10 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] shadow-[0_20px_40px_-24px_rgba(0,0,0,0.9)]">
+                  <Image
+                    src={item.image.url}
+                    alt={`${item.award} — ${item.project}`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
               )}
             </div>
           ))}
