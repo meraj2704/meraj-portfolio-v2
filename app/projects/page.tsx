@@ -52,21 +52,23 @@ export default async function ProjectsIndex() {
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 gap-0.5">
           {projects.map((p) => {
-            const cover = p.cover as ProjectImage;
+            const cover = p.cover as ProjectImage | null;
             return (
               <Link
                 key={String(p._id)}
                 href={`/projects/${p.slug}`}
                 className="relative bg-[#111] overflow-hidden cursor-pointer group no-underline text-inherit block"
               >
-                <div className="relative w-full aspect-[16/10] overflow-hidden">
-                  <Image
-                    src={cover.url}
-                    alt={p.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
-                  />
+                <div className="relative w-full aspect-[16/10] overflow-hidden bg-[#111]">
+                  {cover?.url && (
+                    <Image
+                      src={cover.url}
+                      alt={p.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                    />
+                  )}
                 </div>
                 <div className="flex items-center justify-between px-5 py-4 bg-[#0a0a0a]">
                   <div className="min-w-0">

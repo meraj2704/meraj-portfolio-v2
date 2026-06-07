@@ -18,6 +18,14 @@ export function normalizeRichHtml(html?: string | null): string {
 }
 
 /**
+ * First visible character of a name/title, uppercased — used as a fallback
+ * "logo" when an item has no uploaded image. Returns "?" for empty/blank input.
+ */
+export function initial(text?: string | null): string {
+  return text?.trim().charAt(0).toUpperCase() || "?";
+}
+
+/**
  * Strip HTML tags from rich-text content and collapse whitespace, for places
  * that need plain text (SEO `<meta>` descriptions, truncated card blurbs).
  */

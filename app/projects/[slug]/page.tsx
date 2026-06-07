@@ -68,7 +68,7 @@ export default async function ProjectDetailPage({
     meta.push({ label: "Source", value: "View Code", href: project.sourceUrl });
 
   const gallery = (project.gallery ?? []) as ProjectImage[];
-  const cover = project.cover as ProjectImage;
+  const cover = project.cover as ProjectImage | null;
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen text-white">
@@ -128,15 +128,17 @@ export default async function ProjectDetailPage({
         )}
       </div>
 
-      <div className="px-5 md:px-10 pb-16 md:pb-24">
-        <ParallaxImage
-          src={cover.url}
-          alt={project.title}
-          priority
-          sizes="(max-width: 768px) 100vw, 90vw"
-          className="w-full aspect-[16/9] bg-[#111] rounded-sm"
-        />
-      </div>
+      {cover?.url && (
+        <div className="px-5 md:px-10 pb-16 md:pb-24">
+          <ParallaxImage
+            src={cover.url}
+            alt={project.title}
+            priority
+            sizes="(max-width: 768px) 100vw, 90vw"
+            className="w-full aspect-[16/9] bg-[#111] rounded-sm"
+          />
+        </div>
+      )}
 
       {project.description && project.summary && (
         <section className="px-5 md:px-10 pb-20 md:pb-32">

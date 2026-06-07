@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+import { initial } from "@/lib/utils";
 
 export type ClientItem = {
   name: string;
@@ -116,13 +117,21 @@ function Card({ client }: { client: ClientItem }) {
       }}
     >
       <div className="relative h-24 w-48">
-        <Image
-          src={client.logoUrl}
-          alt={client.name}
-          fill
-          sizes="192px"
-          className="object-contain"
-        />
+        {client.logoUrl ? (
+          <Image
+            src={client.logoUrl}
+            alt={client.name}
+            fill
+            sizes="192px"
+            className="object-contain"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-6xl font-bold uppercase tracking-tight text-white/80">
+              {initial(client.name)}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

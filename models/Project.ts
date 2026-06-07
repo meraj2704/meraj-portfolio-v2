@@ -19,7 +19,7 @@ const ProjectSchema = new Schema(
     client: { type: String, default: "" },
     year: { type: String, default: "" },
     category: { type: String, default: "" },
-    cover: { type: ImageSchema, required: true },
+    cover: { type: ImageSchema },
     gallery: { type: [ImageSchema], default: [] },
     tech: { type: [String], default: [] },
     liveUrl: { type: String, default: "" },

@@ -8,14 +8,12 @@ export default async function ClientsArch() {
     .sort({ order: 1, createdAt: -1 })
     .lean<ClientDoc[]>();
 
-  const clients: ClientItem[] = docs
-    .map((c) => ({
-      name: c.name,
-      logoUrl: c.logo?.url ?? "",
-      rotate: c.rotate ?? 0,
-      y: c.y ?? 0,
-    }))
-    .filter((c) => c.logoUrl);
+  const clients: ClientItem[] = docs.map((c) => ({
+    name: c.name,
+    logoUrl: c.logo?.url ?? "",
+    rotate: c.rotate ?? 0,
+    y: c.y ?? 0,
+  }));
 
   if (clients.length === 0) return null;
 

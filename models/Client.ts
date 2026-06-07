@@ -4,8 +4,8 @@ const ClientSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     logo: {
-      url: { type: String, required: true },
-      publicId: { type: String, required: true },
+      url: String,
+      publicId: String,
     },
     rotate: { type: Number, default: 0 },
     y: { type: Number, default: 0 },

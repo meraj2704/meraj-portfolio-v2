@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { connectDB } from "@/lib/db";
-import { normalizeRichHtml } from "@/lib/utils";
+import { initial, normalizeRichHtml } from "@/lib/utils";
 import { Stack, type StackDoc } from "@/models/Stack";
 import {
   splitContainer,
@@ -28,17 +28,21 @@ export default async function StackSection() {
           {items.map((item) => (
             <div
               key={String(item._id)}
-              className="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 md:p-8 flex flex-col md:flex-row gap-4 md:gap-8 transition-colors duration-300 hover:border-white/10"
+              className="group bg-[#0a0a0a] border border-white/5 rounded-xl p-5 md:p-8 flex flex-col md:flex-row gap-4 md:gap-8 transition-colors duration-300 hover:border-white/10"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#111] flex items-center justify-center shrink-0 overflow-hidden">
-                {item.icon?.url && (
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-white/10 to-transparent border border-white/10 ring-1 ring-primary/20 shadow-[0_8px_30px_-10px_rgba(74,222,128,0.4)] flex items-center justify-center shrink-0 overflow-hidden p-3 transition-all duration-300 group-hover:scale-105 group-hover:ring-[#4ade80]/50">
+                {item.icon?.url ? (
                   <Image
                     src={item.icon.url}
                     alt={item.title}
-                    width={28}
-                    height={28}
+                    width={40}
+                    height={40}
                     className="object-contain"
                   />
+                ) : (
+                  <span className="text-2xl font-extrabold text-[#4ade80]">
+                    {initial(item.title)}
+                  </span>
                 )}
               </div>
               <div className="flex-1">

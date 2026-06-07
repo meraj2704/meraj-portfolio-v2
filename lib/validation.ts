@@ -8,6 +8,13 @@ const imageSchema = z.object({
   height: z.number().optional(),
 });
 
+// Every admin image field is presented as optional (no form marks one required), and
+// the image picker sends `null` when nothing is uploaded. Plain `.optional()` accepts
+// only `undefined`, so a `null` here fails validation (422) and the whole record
+// silently refuses to save. Accept a complete image, or null/undefined for "no image",
+// so a missing logo/icon/cover never blocks a save.
+const optionalImage = imageSchema.nullish();
+
 // Every rich-text field passes through here on save. Two jobs:
 //   1. Sanitize to the editor's allowed tags, so stored HTML is safe to render
 //      with `dangerouslySetInnerHTML` even if it was posted outside the editor.
@@ -27,7 +34,7 @@ export const projectSchema = z.object({
   client: z.string().default(""),
   year: z.string().default(""),
   category: z.string().default(""),
-  cover: imageSchema,
+  cover: optionalImage,
   gallery: z.array(imageSchema).default([]),
   tech: z.array(z.string()).default([]),
   liveUrl: z.string().url().or(z.literal("")).default(""),
@@ -42,7 +49,7 @@ export const experienceSchema = z.object({
   date: z.string().min(1),
   workMode: z.string().default(""),
   desc: richText,
-  logo: imageSchema.partial().optional(),
+  logo: optionalImage,
   order: z.number().default(0),
 });
 
@@ -62,7 +69,7 @@ export const awardSchema = z.object({
   project: z.string().min(1),
   date: z.string().min(1),
   desc: richText,
-  image: imageSchema.partial().optional(),
+  image: optionalImage,
   order: z.number().default(0),
 });
 
@@ -71,13 +78,13 @@ export const stackSchema = z.object({
   role: z.string().min(1),
   percent: z.string().default(""),
   desc: richText,
-  icon: imageSchema,
+  icon: optionalImage,
   order: z.number().default(0),
 });
 
 export const clientSchema = z.object({
   name: z.string().min(1),
-  logo: imageSchema,
+  logo: optionalImage,
   rotate: z.number().default(0),
   y: z.number().default(0),
   order: z.number().default(0),
@@ -91,8 +98,8 @@ export const aboutSchema = z.object({
   location: z.string().default(""),
   email: z.string().default(""),
   phone: z.string().default(""),
-  avatar: imageSchema.partial().optional(),
-  resume: imageSchema.partial().optional(),
+  avatar: optionalImage,
+  resume: optionalImage,
   socials: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
 });
 

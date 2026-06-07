@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { initial } from "@/lib/utils";
 
 export type FeaturedProject = {
   name: string;
@@ -38,14 +39,22 @@ export default function FeaturedSectionView({
             href={`/projects/${project.slug}`}
             className="relative bg-[#111] overflow-hidden cursor-pointer group no-underline text-inherit"
           >
-            <div className="relative w-full aspect-[16/10] overflow-hidden">
-              <Image
-                src={project.image}
-                alt={project.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
-              />
+            <div className="relative w-full aspect-[16/10] overflow-hidden bg-[#111]">
+              {project.image ? (
+                <Image
+                  src={project.image}
+                  alt={project.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <span className="text-7xl font-black uppercase tracking-tight text-white/20">
+                    {initial(project.name)}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between px-5 py-4 bg-[#0a0a0a]">
               <div className="min-w-0">

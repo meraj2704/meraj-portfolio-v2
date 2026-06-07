@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { connectDB } from "@/lib/db";
-import { normalizeRichHtml } from "@/lib/utils";
+import { initial, normalizeRichHtml } from "@/lib/utils";
 import { Experience, type ExperienceDoc } from "@/models/Experience";
 import {
   splitContainer,
@@ -32,18 +32,22 @@ export default async function ExperienceSection() {
         <div className={splitList}>
           {items.map((item) => (
             <div key={String(item._id)} className={splitItem}>
-              <div className="flex items-center gap-4 mb-4">
-                {item.logo?.url && (
-                  <span className="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="group flex items-center gap-4 mb-4">
+                <span className="w-14 h-14 rounded-xl bg-linear-to-br from-white/15 to-white/4 border border-white/15 ring-1 ring-primary/25 shadow-[0_8px_24px_-8px_rgba(74,222,128,0.4)] flex items-center justify-center shrink-0 overflow-hidden p-2 transition-all duration-300 group-hover:scale-105 group-hover:ring-[#4ade80]/60">
+                  {item.logo?.url ? (
                     <Image
                       src={item.logo.url}
                       alt={item.company}
-                      width={30}
-                      height={30}
+                      width={36}
+                      height={36}
                       className="object-contain"
                     />
-                  </span>
-                )}
+                  ) : (
+                    <span className="text-xl font-extrabold text-[#4ade80]">
+                      {initial(item.company)}
+                    </span>
+                  )}
+                </span>
                 <h3 className="text-2xl font-bold text-white uppercase">{item.company}</h3>
               </div>
               <div className={splitItemMeta}>

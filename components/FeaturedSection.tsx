@@ -14,7 +14,7 @@ export default async function FeaturedSection() {
     slug: p.slug,
     category: p.category || "",
     year: p.year || "",
-    image: (p.cover as { url: string }).url,
+    image: (p.cover as { url?: string } | null)?.url ?? "",
   }));
 
   if (projects.length === 0) return null;

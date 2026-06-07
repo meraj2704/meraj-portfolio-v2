@@ -7,8 +7,8 @@ const StackSchema = new Schema(
     percent: { type: String, default: "" },
     desc: { type: String, default: "" },
     icon: {
-      url: { type: String, required: true },
-      publicId: { type: String, required: true },
+      url: String,
+      publicId: String,
     },
     order: { type: Number, default: 0 },
   },
